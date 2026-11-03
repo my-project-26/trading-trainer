@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trading-Lerncenter</title>
+<meta name="description" content="Nachschlagen, Trainer und Werkzeuge zum TJR-Kurs: Struktur, Liquidität, BOS, FVG, Strategie.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232448c7'/%3E%3Cpath d='M9 7v18M23 7v18' stroke='%23fff' stroke-width='2'/%3E%3Crect x='6' y='11' width='6' height='9' fill='%23fff'/%3E%3Crect x='20' y='13' width='6' height='7' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M9 7v18M23 7v18" stroke="var(--accent-ink)" stroke-width="2"/><rect x="6" y="11" width="6" height="9" fill="var(--accent-ink)"/><rect x="20" y="13" width="6" height="7" fill="none" stroke="var(--accent-ink)" stroke-width="2"/></svg>Trading-Lerncenter</div>
+    <nav class="tabs" aria-label="Bereiche">
+      <a href="#lernen" data-v="lernen">Nachschlagen</a>
+      <a href="#trainer" data-v="trainer">Trainer</a>
+      <a href="#werkzeuge" data-v="werkzeuge">Tagesablauf</a>
+    </nav>
+    <div class="seg" id="scheme" role="group" aria-label="Kerzenfarben">
+      <button type="button" data-s="rg" aria-pressed="true"><span class="sw rg" aria-hidden="true"><i></i><i></i></span>Rot/Grün</button>
+      <button type="button" data-s="bw" aria-pressed="false"><span class="sw bw" aria-hidden="true"><i></i><i></i></span>Schwarz/Weiß</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Nachschlagen -->
+  <section class="view" id="v-lernen">
+    <div class="pagehead">
+      <h1>Nachschlagen</h1>
+      <p class="lead">Alle Regeln aus den 16 Lektionen mit beschrifteten Charts. Oben rechts schaltest du die Kerzenfarben um.</p>
+    </div>
+    <div class="learn">
+      <aside class="toc">
+        <input class="search" id="search" type="search" placeholder="Suchen, z. B. Lunte, BOS, EQ" aria-label="Themen durchsuchen">
+        <select class="tocsel" id="tocsel" aria-label="Thema wählen"></select>
+        <nav id="tocnav" aria-label="Themen"></nav>
+      </aside>
+      <div id="topics-wrap">
+        <p class="empty" id="noresult" hidden>Nichts gefunden. Versuch ein anderes Wort.</p>
+        <div id="topics"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trainer -->
+  <section class="view" id="v-trainer" hidden>
+    <div class="pagehead">
+      <h1>Trainer</h1>
+      <p class="lead">Fragen aus allen Lektionen und endlose Chart-Aufgaben. Eine Frage sitzt, wenn du sie zweimal hintereinander richtig hast. Falsche kommen bevorzugt wieder.</p>
+    </div>
+    <div class="modes" id="tmodes" role="group" aria-label="Modus">
+      <button class="chip" type="button" data-m="bank">Fragen</button>
+      <button class="chip" type="button" data-m="drill">Bild-Drill</button>
+    </div>
+    <div class="modes" id="drillkinds" role="group" aria-label="Aufgabentyp" hidden></div>
+    <div class="trainer">
+      <div class="card">
+        <div class="qmeta"><span class="mono" id="scope"></span><span class="mono" id="stat"></span></div>
+        <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+        <div id="qbox">
+          <p class="mono" id="qtag" style="margin:14px 0 0"></p>
+          <p class="qt" id="qt"></p>
+          <div class="qfig" id="qfig" hidden></div>
+          <div class="opts" id="opts"></div>
+          <p class="fb" id="fb" aria-live="polite"></p>
+          <div class="nextrow"><button class="btn" type="button" id="next" hidden>Nächste Aufgabe</button></div>
+        </div>
+        <div class="done" id="done" hidden></div>
+      </div>
+      <aside class="card side">
+        <div id="bankside">
+          <h3>Lektionen</h3>
+          <div class="grid16" id="grid16"></div>
+        </div>
+        <div id="drillside" hidden>
+          <h3>Serie</h3>
+          <p class="big" id="streak">0</p>
+          <h3 style="margin-top:12px">Trefferquote</h3>
+          <div class="dstats" id="dstats"></div>
+        </div>
+        <p style="margin:14px 0 0"><button class="linkbtn" type="button" id="reset">Fortschritt dieses Modus zurücksetzen</button></p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Werkzeuge -->
+  <section class="view" id="v-werkzeuge" hidden>
+    <div class="pagehead">
+      <h1>Tagesablauf & Rechner</h1>
+      <p class="lead">Deine Routine für jeden Handelstag mit deutschen Uhrzeiten, dazu die Rechner für Position, Erwartung und FTMO-Tageslimit.</p>
+    </div>
+    <div class="tools">
+      <div class="card">
+        <h2>Checkliste für heute</h2>
+        <p class="mono" style="margin:-4px 0 6px"><span id="checkdate"></span> · <span id="gapnote"></span></p>
+        <ul class="checks" id="checks"></ul>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="card calc">
+          <h2>Positionsgröße</h2>
+          <div class="form">
+            <label>Kontogröße (€)<input id="p-acc" inputmode="decimal" value="100000"></label>
+            <label>Risiko pro Trade (%)<input id="p-risk" inputmode="decimal" value="1"></label>
+            <label>Stop (Punkte)<input id="p-stop" inputmode="decimal" value="10"></label>
+            <label>Wert pro Punkt je Lot (€)<input id="p-vpp" inputmode="decimal" value="1"></label>
+            <label style="grid-column:1/-1">Tag<select id="p-half"><option value="0">Normal</option><option value="1">News oder großer Stop: halbieren</option></select></label>
+          </div>
+          <div class="result"><div><b id="p-eur">–</b><span>Risiko in Euro</span></div><div><b id="p-lots">–</b><span>Lots</span></div></div>
+        </div>
+        <div class="card calc">
+          <h2>Erwartung</h2>
+          <div class="form">
+            <label>Trefferquote (%)<input id="e-win" inputmode="decimal" value="40"></label>
+            <label>CRV (1 : x)<input id="e-rr" inputmode="decimal" value="2"></label>
+          </div>
+          <div class="result"><div><b id="e-ex">–</b><span>Erwartung pro Trade</span></div><div><b id="e-be">–</b><span>Break-even-Trefferquote</span></div></div>
+        </div>
+        <div class="card calc">
+          <h2>FTMO-Tageslimit</h2>
+          <div class="form">
+            <label>Kontogröße (€)<input id="f-size" inputmode="decimal" value="100000"></label>
+            <label>Tageslimit<select id="f-lim"><option value="5">5 % (2-Step)</option><option value="3">3 % (1-Step)</option></select></label>
+            <label>Kontostand um Mitternacht (€)<input id="f-start" inputmode="decimal" value="100000"></label>
+            <label>Heute realisiert (€, Verlust mit Minus)<input id="f-real" inputmode="decimal" value="0"></label>
+            <label style="grid-column:1/-1">Offene Positionen (€, Verlust mit Minus)<input id="f-open" inputmode="decimal" value="0"></label>
+          </div>
+          <div class="result"><div><b id="f-left">–</b><span>Noch Luft heute</span></div><div><b id="f-floor">–</b><span>Equity darf nicht darunter</span></div></div>
+        </div>
+        <div class="card">
+          <h2>Links</h2>
+          <div class="links">
+            <a class="btn ghost" href="https://my-project-26.github.io/Journal/">Journal</a>
+            <a class="btn ghost" href="https://www.forexfactory.com/calendar" target="_blank" rel="noopener">News-Kalender ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="engine.js"></script>
+<script src="content.js"></script>
+<script src="quiz.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
