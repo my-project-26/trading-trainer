@@ -30,6 +30,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-ui); }
 a { color: var(--accent); }
@@ -202,7 +203,8 @@ th { font-family: var(--f-mono); font-size: 0.72rem; text-transform: uppercase; 
 .fb .no { color: var(--no); }
 .qfig { margin: 0 0 12px; }
 .nextrow { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.progress { height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; margin: 6px 0 4px; }
+.progress { height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; margin: 6px 0 4px; display: flex; }
+.progress #bar2 { background: color-mix(in srgb, var(--ok) 40%, var(--soft)); }
 .progress i { display: block; height: 100%; background: var(--ok); width: 0; transition: width 0.3s; }
 .mono { font-family: var(--f-mono); font-size: 0.82rem; color: var(--muted); }
 .side h3 { font-size: 1rem; margin-bottom: 8px; }

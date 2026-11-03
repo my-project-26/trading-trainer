@@ -168,8 +168,10 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
   function stats() {
     if (trainerMode === 'bank') {
       const p = pool(), l = p.filter(learned).length;
-      $('#stat').textContent = p.length ? `${l} von ${p.length} sitzen` : '';
+      const half = p.filter(q => (S.bank[q.id] || {}).s === 1).length;
+      $('#stat').textContent = p.length ? `${l} von ${p.length} sitzen` + (half ? ` · ${half} halb` : '') : '';
       $('#bar').style.width = (p.length ? l / p.length * 100 : 0) + '%';
+      $('#bar2').style.width = (p.length ? half / p.length * 100 : 0) + '%';
       $('#scope').textContent = trainerFilter === 'all' ? 'Alle Lektionen' : trainerFilter === 'wrong' ? 'Nur Fehler' : `Lektion ${trainerFilter.slice(1)} · ${LESSONS[+trainerFilter.slice(1)][0]}`;
     } else {
       let n = 0, ok = 0, h = '';
@@ -182,6 +184,7 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
       $('#streak').textContent = S.streak || 0;
       $('#stat').textContent = n ? `${ok} von ${n} richtig (${Math.round(ok / n * 100)} %)` : 'Noch keine Aufgaben';
       $('#bar').style.width = (n ? ok / n * 100 : 0) + '%';
+      $('#bar2').style.width = '0%';
       $('#scope').textContent = drillKind === 'mix' ? 'Bild-Drill · gemischt' : 'Bild-Drill · ' + DRILLS[drillKind].name;
     }
   }
@@ -200,10 +203,19 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
         return;
       }
       $('#qbox').hidden = false; $('#done').hidden = true;
-      open.sort((a, b) => ((S.bank[b.id] || {}).w || 0) - ((S.bank[a.id] || {}).w || 0) || Math.random() - 0.5);
-      const top = open.filter(q => ((S.bank[q.id] || {}).w || 0) === ((S.bank[open[0].id] || {}).w || 0));
-      const cand = top.length > 1 ? top.filter(q => q !== last) : open.filter(q => q !== last);
-      const q = cand.length ? cand[Math.floor(Math.random() * cand.length)] : open[0];
+      // Reihenfolge: falsche nach 2 anderen Fragen, einmal richtige nach 3, dann neue
+      const turn = S.turn || 0;
+      const st = q => S.bank[q.id] || {};
+      const ago = q => turn - (st(q).t ?? -99);
+      const rest = open.filter(q => q !== last);
+      const groups = [
+        rest.filter(q => st(q).t !== undefined && !st(q).s && ago(q) >= 2),
+        rest.filter(q => st(q).s === 1 && ago(q) >= 3),
+        rest.filter(q => st(q).t === undefined),
+        rest
+      ];
+      const cand = groups.find(g => g.length) || open;
+      const q = cand[Math.floor(Math.random() * cand.length)];
       last = q;
       const idx = shuffle(q.o.map((_, i) => i));
       cur = { kind: 'bank', q, order: idx, a: q.a };
@@ -245,6 +257,8 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
     if (cur.kind === 'bank') {
       const s = S.bank[cur.q.id] || { s: 0, w: 0 };
       if (ok) s.s += 1; else { s.s = 0; s.w += 1; }
+      S.turn = (S.turn || 0) + 1;
+      s.t = S.turn;
       S.bank[cur.q.id] = s;
       head = ok ? (s.s >= 2 ? 'Richtig, sitzt!' : 'Richtig. Noch einmal, dann sitzt sie.') : 'Nicht ganz. Die Frage kommt wieder.';
       expl = cur.q.e;
