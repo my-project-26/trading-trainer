@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bias vor 15:30</title>
+<meta name="description" content="Lektion zum Journal-Feld Bias vor 15:30 mit zwanzig geführten Übungscharts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lektion.css">
+</head>
+<body>
+<main class="wrap">
+  <header style="display:grid;gap:12px">
+    <span class="eyebrow">Lektion · US 500 · Journal-Feld „Bias vor 15:30“</span>
+    <h1>Bias vor 15:30</h1>
+    <p class="lead">Der Bias ist deine Erwartung, ob der Preis nach der NY-Eröffnung zuerst ein offenes Level oben oder unten holt. Du leitest ihn jeden Tag mit derselben Regel aus den Kerzen vor 15:30 ab.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">1 · Der Tagesablauf</span>
+    <h2>Vier Abschnitte, eine Stichzeit</h2>
+    <p>Alles vor 15:30 ist Vorbereitung. Hoch und Tief jedes Abschnitts sind Liquiditäts-Level: Dort liegen Stopps, die der Markt gern abholt. Um 15:30 schaust du, welche Level noch offen sind und wie sich der Preis an den schon erreichten verhalten hat.</p>
+    <div class="timeline" role="list">
+      <div role="listitem" style="--c: var(--ny)"><b>Vortag NY</b><span>9:30–16:00 NY</span><span>15:30–22:00 DE</span></div>
+      <div role="listitem" style="--c: var(--asia)"><b>Asien</b><span>18:00–03:00 NY</span><span>00:00–09:00 DE</span></div>
+      <div role="listitem" style="--c: var(--london)"><b>London</b><span>03:00–09:30 NY</span><span>09:00–15:30 DE</span></div>
+      <div role="listitem" style="--c: var(--open)"><b>NY heute</b><span>ab 9:30 NY</span><span>ab 15:30 DE</span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">2 · Die eine Frage</span>
+    <h2>Wo steht der Preis um 15:30?</h2>
+    <p>Du musst nicht jede Kerze deuten. Für jedes Level, das vor 15:30 erreicht wurde, stellst du nur eine Frage: Steht der Preis um 15:30 wieder auf der Seite, von der er kam, oder jenseits des Levels?</p>
+    <div class="candles">
+      <div class="cand">
+        <svg viewBox="0 0 120 110" aria-hidden="true"><line x1="6" y1="34" x2="114" y2="34" stroke="var(--asia)" stroke-dasharray="5 3"/><line x1="60" y1="14" x2="60" y2="96" stroke="var(--fg)" stroke-width="1.5"/><rect x="49" y="50" width="22" height="34" fill="var(--fg)" stroke="var(--fg)"/><line x1="6" y1="70" x2="114" y2="70" stroke="var(--open)" stroke-width="1.5"/></svg>
+        <b>Sweep oben</b><span>Hoch erreicht, Preis steht um 15:30 wieder darunter.</span>
+      </div>
+      <div class="cand">
+        <svg viewBox="0 0 120 110" aria-hidden="true"><line x1="6" y1="76" x2="114" y2="76" stroke="var(--asia)" stroke-dasharray="5 3"/><line x1="60" y1="14" x2="60" y2="96" stroke="var(--fg)" stroke-width="1.5"/><rect x="49" y="26" width="22" height="34" fill="var(--surface)" stroke="var(--fg)" stroke-width="1.5"/><line x1="6" y1="40" x2="114" y2="40" stroke="var(--open)" stroke-width="1.5"/></svg>
+        <b>Sweep unten</b><span>Tief erreicht, Preis steht um 15:30 wieder darüber.</span>
+      </div>
+      <div class="cand">
+        <svg viewBox="0 0 120 110" aria-hidden="true"><line x1="6" y1="60" x2="114" y2="60" stroke="var(--asia)" stroke-dasharray="5 3"/><line x1="60" y1="12" x2="60" y2="94" stroke="var(--fg)" stroke-width="1.5"/><rect x="49" y="22" width="22" height="62" fill="var(--surface)" stroke="var(--fg)" stroke-width="1.5"/><line x1="6" y1="28" x2="114" y2="28" stroke="var(--open)" stroke-width="1.5"/></svg>
+        <b>Durchbruch oben</b><span>Hoch erreicht, Preis steht um 15:30 darüber.</span>
+      </div>
+      <div class="cand">
+        <svg viewBox="0 0 120 110" aria-hidden="true"><line x1="6" y1="50" x2="114" y2="50" stroke="var(--asia)" stroke-dasharray="5 3"/><line x1="60" y1="16" x2="60" y2="98" stroke="var(--fg)" stroke-width="1.5"/><rect x="49" y="26" width="22" height="62" fill="var(--fg)" stroke="var(--fg)"/><line x1="6" y1="84" x2="114" y2="84" stroke="var(--open)" stroke-width="1.5"/></svg>
+        <b>Durchbruch unten</b><span>Tief erreicht, Preis steht um 15:30 darunter.</span>
+      </div>
+    </div>
+    <p>Die blaue Linie in den Bildern ist der Kurs um 15:30. Ein Sweep kann eine einzelne Kerze mit langem Docht oder langer Lunte sein. Er kann aber auch aus mehreren Kerzen bestehen, die über das Level laufen und später zurückkommen. Das zählt beides als Sweep, weil am Ende nur der Stand um 15:30 entscheidet.</p>
+    <p class="box-note">Warum das funktioniert: Ein Sweep zeigt, dass der Markt die Stopps auf dieser Seite abgeholt hat und dort nicht bleiben wollte. Die Liquidität auf der Gegenseite ist noch da, also ist sie das wahrscheinlichere Ziel.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">3 · Die Regel</span>
+    <h2>Drei Schritte, jeden Tag gleich</h2>
+    <ol class="steps">
+      <li><div><h3>Erreichte Level einordnen</h3><p>Geh die Linien von Vortag, Asien und London durch. Für jede, die vor 15:30 berührt wurde: Steht der Preis um 15:30 wieder diesseits, ist es ein Sweep. Steht er jenseits, ist es ein Durchbruch. Durchbrüche streichst du.</p></div></li>
+      <li><div><h3>Seite der Sweeps bestimmen</h3><p>Liegen alle Sweeps unten, ist der Bias bullish. Liegen alle oben, ist er bearish. Gibt es Sweeps auf beiden Seiten oder gar keine, ist der Bias keiner.</p></div></li>
+      <li><div><h3>Ziel prüfen</h3><p>Das erste Ziel ist das nächste offene Level auf der Gegenseite der Sweeps. Gibt es dort kein offenes Level, ist der Bias ebenfalls keiner.</p></div></li>
+    </ol>
+    <p class="box-note">Die Regel ist ein Startpunkt. Wende sie 30 bis 50 Tage unverändert an, bevor du sie anpasst. Sonst misst das Journal nur dein Bauchgefühl.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">4 · Die Wertung</span>
+    <h2>Treffer, Fehler, nicht gewertet</h2>
+    <div class="figure">
+      <svg viewBox="0 0 680 250" role="img" aria-labelledby="wt wd"><title id="wt">Wertung des Bias</title><desc id="wd">Bullisher Bias mit Treffer am oberen Level, bullisher Bias mit Fehler am unteren Level, kein Bias ohne Wertung.</desc>
+        <g font-size="12">
+          <text x="110" y="22" text-anchor="middle" fill="var(--fg)" font-weight="500">Bias bullish</text>
+          <text x="110" y="40" text-anchor="middle" fill="var(--bull)">oben zuerst · Treffer</text>
+          <text x="340" y="22" text-anchor="middle" fill="var(--fg)" font-weight="500">Bias bullish</text>
+          <text x="340" y="40" text-anchor="middle" fill="var(--bear)">unten zuerst · Fehler</text>
+          <text x="570" y="22" text-anchor="middle" fill="var(--fg)" font-weight="500">Kein Bias</text>
+          <text x="570" y="40" text-anchor="middle" fill="var(--muted)">nicht gewertet</text>
+        </g>
+        <g stroke="var(--muted)" stroke-dasharray="4 3" stroke-width="1" fill="none">
+          <line x1="20" y1="70" x2="200" y2="70"/><line x1="20" y1="200" x2="200" y2="200"/>
+          <line x1="250" y1="70" x2="430" y2="70"/><line x1="250" y1="200" x2="430" y2="200"/>
+          <line x1="480" y1="70" x2="660" y2="70"/><line x1="480" y1="200" x2="660" y2="200"/>
+        </g>
+        <g stroke="var(--open)" stroke-dasharray="2 3" stroke-width="1.2">
+          <line x1="110" y1="76" x2="110" y2="194"/><line x1="340" y1="76" x2="340" y2="194"/><line x1="570" y1="76" x2="570" y2="194"/>
+        </g>
+        <g font-size="11" fill="var(--muted)">
+          <text x="20" y="62">offenes Level oben</text><text x="20" y="218">offenes Level unten</text>
+          <text x="250" y="62">offenes Level oben</text><text x="250" y="218">offenes Level unten</text>
+          <text x="480" y="62">offenes Level oben</text><text x="480" y="218">offenes Level unten</text>
+          <text x="110" y="238" text-anchor="middle">15:30</text><text x="340" y="238" text-anchor="middle">15:30</text><text x="570" y="238" text-anchor="middle">15:30</text>
+        </g>
+        <g fill="none" stroke-width="2" stroke-linejoin="round">
+          <polyline stroke="var(--muted)" points="24,140 44,128 64,146 84,132 110,138"/>
+          <polyline stroke="var(--bull)" points="110,138 130,118 150,126 172,94 196,70"/>
+          <polyline stroke="var(--muted)" points="254,140 274,128 294,146 314,132 340,138"/>
+          <polyline stroke="var(--bear)" points="340,138 360,156 380,150 402,178 426,200"/>
+          <polyline stroke="var(--muted)" points="484,140 504,128 524,146 544,132 570,138"/>
+          <polyline stroke="var(--muted)" stroke-dasharray="3 3" points="570,138 590,124 610,150 630,130 654,146"/>
+        </g>
+        <circle cx="196" cy="70" r="5" fill="var(--bull)"/>
+        <circle cx="426" cy="200" r="5" fill="var(--bear)"/>
+      </svg>
+    </div>
+    <p>Gewertet wird nur, welches offene Level nach 15:30 zuerst erreicht wird. Das kann in fünf Minuten passieren oder erst nach zwei Stunden. Tage mit „keiner“ zählen nicht zur Trefferquote, du zählst sie aber getrennt mit.</p>
+  </section>
+
+  <section id="uebungen">
+    <span class="eyebrow">5 · Geführt üben</span>
+    <h2>Zwanzig Charts, Schritt für Schritt</h2>
+    <p>Die blaue Linie zeigt den Kurs um 15:30. Vergleich jede Level-Linie mit ihr: Liegt ein berührtes Hoch über der blauen Linie, war es ein Sweep. Liegt es darunter, ein Durchbruch. Für Tiefs gilt das umgekehrt. Nach Frage 1 markiert der Chart jedes berührte Level mit S (Sweep) oder D (Durchbruch). Mit „Tipp“ siehst du die Markierungen vorher. Zeiten in New-Yorker Zeit wie in deinem Chart, Kurse sind Übungsdaten.</p>
+    <div class="score" aria-live="polite"><span>Richtige Antworten: <strong id="sc-steps">0 / 0</strong></span><span>Trefferquote der Regel: <strong id="sc-hit">–</strong></span></div>
+    <div id="exercises" style="display:grid;gap:18px"></div>
+    <button class="reset" id="reset-all" type="button">Alle Übungen zurücksetzen</button>
+  </section>
+
+  <section>
+    <span class="eyebrow">6 · Typische Fehler</span>
+    <h2>Woran der Bias meistens scheitert</h2>
+    <ul class="mistakes">
+      <li>Der Richtung der letzten großen Kerze folgen. Eine lange grüne Kerze in London sagt nichts, solange du nicht weißt, auf welcher Seite die Sweeps liegen.</li>
+      <li>Jede Berührung als Sweep zählen. Steht der Preis um 15:30 jenseits des Levels, war es ein Durchbruch und zählt nicht.</li>
+      <li>Nur auf einzelne Dochte schauen. Ein Sweep über mehrere Kerzen ist genauso ein Sweep.</li>
+      <li>„Keiner“ vermeiden wollen. Sweeps auf beiden Seiten sind ein klares Signal für einen unklaren Tag.</li>
+      <li>Den Bias nach 15:30 noch korrigieren. Dann misst die Statistik nichts mehr.</li>
+    </ul>
+  </section>
+</main>
+
+<script>
+(function () {
+  var NAMES = { bull: "Bullish", bear: "Bearish", none: "Keiner" };
+  var SIDE = { low: "Nur unten", high: "Nur oben", both: "Beide Seiten", none: "Keine Sweeps" };
+  var SESS = [
+    { key: "vt", label: "Vortag NY", color: "var(--ny)", t: "9:30" },
+    { key: "asia", label: "Asien", color: "var(--asia)", t: "18:00" },
+    { key: "london", label: "London", color: "var(--london)", t: "03:00" },
+    { key: "ny", label: "NY", color: "var(--open)", t: "9:30" }
+  ];
+  var LEVEL_NAME = { vt: "Vortag", asia: "Asien", london: "London" };
+
+  // Kerzen: Zahl = Schlusskurs; [Schluss, Hoch, Tief] = Kerze mit bewusstem Docht/Lunte
+  var SCENARIOS = [
+    { title: "Lehrbuchfall", start: 55,
+      vt: [56,58,60,61,59,57,55,53,52,53],
+      asia: [54,55,56,57,56,55,54,55,56,55,54,55],
+      london: [54,55,54,[54.5,55.2,50.5],55,56,56.5,56,56.5,56.5],
+      ny: [57.5,58,59,60,61,60,62,61,63,62,64,63],
+      why1: "Eine London-Kerze sticht mit langer Lunte unter das Asien-Tief und das Vortagestief. Um 15:30 steht der Preis deutlich über beiden: zwei Sweeps unten. Oben wurde nichts berührt." },
+    { title: "Falle oben", start: 59,
+      vt: [60,58,57,55,56,58,59,57,56,58],
+      asia: [57,56,57,58,58.5,58,57,56,57,58,57,57],
+      london: [57.5,58,58.5,[58,62,57.6],57.5,57,57.5,57,56.8,57],
+      ny: [56,55,54,53,54,52,51,52,50,49,50,48],
+      why1: "Eine London-Kerze schießt mit langem Docht über das Asien-Hoch und das Vortageshoch und schließt wieder darunter. Um 15:30 steht der Preis unter beiden Linien: zwei Sweeps oben." },
+    { title: "Ruhiges London", start: 50,
+      vt: [51,53,52,54,55,53,52,54,57,55],
+      asia: [54,52,51,53,55,56,54,53,52,54,55,54],
+      london: [53,54,55,54,53,52,53,54,55,54],
+      ny: [56,57,58,59,58,60,61,60,62,61,63,62],
+      why1: "Kein früheres Level wurde berührt. Asien bleibt innerhalb der Vortagesspanne, London innerhalb der Asien-Spanne. Ohne Sweep gibt es keine Richtung." },
+    { title: "Regel richtig, Ergebnis falsch", start: 62,
+      vt: [61,59,60,58,57,59,58,56,57,58],
+      asia: [59,60,61,60,59,58,59,60,61,60,59,60],
+      london: [59,58.5,[59,59.5,54],59.5,60,60.5,60,60.5,60.5,60.5],
+      ny: [[59.5,60.6,59.1],58,56,55,54,53,54,56,58,60,62,64],
+      why1: "Lange Lunte in London unter das Asien-Tief und das Vortagestief, um 15:30 steht der Preis klar darüber. Zwei Sweeps unten, genau wie im Lehrbuchfall." },
+    { title: "Wie am 04.11. (Wahlnacht)", start: 55,
+      vt: [56,57,56,55,54,55,56,57,56,55],
+      asia: [53,50,46,42,40,41,44,48,52,55,58,59],
+      london: [60,62,63,65,67,66,68,69,70,70],
+      ny: [72,73,72,74,75,74,76,75,77,76,78,77],
+      why1: "Asien läuft über mehrere Kerzen weit unter das Vortagestief und kommt zurück. Um 15:30 steht der Preis weit darüber: Sweep unten. Vortageshoch und Asien-Hoch wurden auch berührt, aber der Preis steht um 15:30 darüber. Das sind Durchbrüche, die zählen nicht. Bleibt: nur unten." },
+    { title: "Beide Seiten geholt", start: 50,
+      vt: [52,54,53,55,54,52,51,53,54,53],
+      asia: [52,53,54,53,52,51,52,53,54,53,52,53],
+      london: [53.5,[54,56.5,53.2],54,53,[52.5,53.4,49],52,53,53.5,53,53],
+      ny: [52,51,50,48,47,46,47,45,44,45,43,44],
+      why1: "In London holt erst ein Docht die Hochs von Asien und Vortag, später eine Lunte die Tiefs. Um 15:30 steht der Preis zwischen allen Linien: Sweeps auf beiden Seiten." },
+    { title: "Spiegelbild der Wahlnacht", start: 60,
+      vt: [59,58,59,60,61,60,59,58,59,60],
+      asia: [62,65,69,73,75,74,71,67,63,60,57,56],
+      london: [55,53,52,50,48,49,47,46,45,45],
+      ny: [43,42,43,41,40,41,39,40,38,39,37,38],
+      why1: "Asien läuft weit über das Vortageshoch und fällt zurück. Um 15:30 steht der Preis weit darunter: Sweep oben. Vortagestief und Asien-Tief wurden unterschritten und der Preis steht um 15:30 darunter: Durchbrüche. Bleibt: nur oben." },
+    { title: "Durchbruch und Sweep", start: 50,
+      vt: [51,52,51,53,52,51,52,53,52,53],
+      asia: [54,55,56,55,56,57,56,55,56,57,56,56],
+      london: [56.5,57,[56.8,60,56.4],56,55.5,56,55.5,55,55.5,55.5],
+      ny: [54.5,54,53,52,51,52,50,49,50,48,47,48],
+      why1: "Asien steigt über das Vortageshoch und bleibt dort, um 15:30 steht der Preis darüber: Durchbruch. In London holt ein Docht das Asien-Hoch, der Preis steht um 15:30 wieder darunter: Sweep oben. Der Durchbruch zählt nicht, also nur oben." },
+    { title: "Lunte am Asien-Tief", start: 50,
+      vt: [51,53,52,54,53,51,49,47,48,50],
+      asia: [51,52,51,52,53,52,51,52,53,52,51.5,52],
+      london: [52,51.5,51,[51,51.6,49.2],51.5,52,52.5,52,52.5,52.5],
+      ny: [53.5,54,55,56,55,57,58,57,59,58,60,59],
+      why1: "Eine London-Kerze sticht mit der Lunte knapp unter das Asien-Tief. Um 15:30 steht der Preis wieder darüber: Sweep unten. Das Vortagestief liegt weit tiefer und wurde nicht berührt." },
+    { title: "Sweep in Asien", start: 60,
+      vt: [59,58,57,58,57,56,57,58,57,57.5],
+      asia: [57,58,59,60,61,62,61,59,58,57,58,57.5],
+      london: [57.5,58,58.5,58,57.8,58.2,58.5,58,57.8,58],
+      ny: [57,56.5,56,55,54,55,53,52,53,51,50,51],
+      why1: "Asien läuft über mehrere Kerzen über das Vortageshoch und fällt wieder zurück. London bleibt ruhig in der Asien-Spanne. Um 15:30 steht der Preis unter dem Vortageshoch: Sweep oben." },
+    { title: "Trendtag ohne Sweep", start: 50,
+      vt: [51,52,51,52,53,52,51,52,53,52],
+      asia: [53,54,55,56,55,56,57,56,57,58,57,58],
+      london: [59,60,61,60,61,62,63,62,63,63],
+      ny: [64,65,64,66,67,66,68,67,69,68,70,69],
+      why1: "Asien steigt über das Vortageshoch, London über das Asien-Hoch. Um 15:30 steht der Preis über beiden: zwei Durchbrüche. Ein Sweep ist nirgends zu sehen, also keine Richtung nach der Regel, auch wenn der Trend verlockend aussieht." },
+    { title: "Falle oben, aber Fehler", start: 55,
+      vt: [56,55,54,55,56,55,54,53,54,55],
+      asia: [54.5,55,54.5,55,55.5,55.8,55.5,55,54.5,55,55.5,55],
+      london: [55,55.5,[56,58.5,55.6],55.5,55,55.5,55,54.8,55,55],
+      ny: [[56,56.4,54.9],57,58,59,58,60,61,60,62,61,63,62],
+      why1: "Ein langer Docht in London holt die Hochs von Asien und Vortag, die Kerze schließt wieder darunter. Um 15:30 steht der Preis klar darunter: Sweep oben, also bearish. Lehrbuchmäßig, aber NY läuft trotzdem zuerst nach oben." },
+    { title: "Sweeps oben und unten", start: 60,
+      vt: [59,58,59,60,59,58,57,58,59,58],
+      asia: [57,56,55.5,56,57,58,58.5,59,58.5,58,58.5,58],
+      london: [58.5,[58.6,59.9,58.2],58.5,58,57.5,58,58.5,58,57.8,58],
+      ny: [57,56,55,56,54,53,54,52,51,52,50,51],
+      why1: "Asien rutscht über mehrere Kerzen unter das Vortagestief und kommt zurück: Sweep unten. London holt mit einem Docht das Asien-Hoch und schließt darunter: Sweep oben. Beide Seiten, also keiner." },
+    { title: "Knapper Sweep unten", start: 52,
+      vt: [53,54,55,54,53,52,51,52,53,54],
+      asia: [55,56,55.5,56,57,56.5,56,55.5,56,56.5,56,56],
+      london: [55.5,55,54.5,[54.5,55,53.2],55,55.5,56,56.5,56,56.5],
+      ny: [57.5,58,59,58,60,61,60,62,61,63,62,64],
+      why1: "Die Lunte in London geht nur ganz knapp unter das Asien-Tief. Knapp reicht: Das Level wurde berührt, und um 15:30 steht der Preis darüber. Sweep unten. Das Vortageshoch hat Asien schon durchbrochen, das zählt nicht." },
+    { title: "Knapper Sweep oben", start: 58,
+      vt: [57,56,55,56,57,58,57,56,57,56],
+      asia: [56,55.5,56,56.5,57,56.5,56,55.5,56,56.5,56,56],
+      london: [56.5,56,56.5,[56.8,57.9,56.5],56.5,56,55.8,56,55.8,56],
+      ny: [55,54.5,54,53,54,52,51,52,50,49,50,48],
+      why1: "Der Docht in London ragt nur ganz knapp über das Asien-Hoch. Das Level wurde berührt, und um 15:30 steht der Preis darunter: Sweep oben." },
+    { title: "Docht, dann Durchbruch", start: 50,
+      vt: [51,52,51,52,51,50,51,52,51,52],
+      asia: [52.5,53,53.5,53,52.5,53,53.5,53,52.5,53,53.5,53],
+      london: [53.5,[53.8,55,53.4],53.8,54.2,54.5,55,55.5,56,56.5,56.5],
+      ny: [57,58,57.5,59,60,59,61,60,62,61,63,62],
+      why1: "Zuerst sieht es nach einem Sweep aus: Ein Docht geht über das Asien-Hoch und die Kerze schließt darunter. Danach steigt London aber weiter, und um 15:30 steht der Preis klar über dem Asien-Hoch. Entscheidend ist der Stand um 15:30, also Durchbruch. Das Vortageshoch hat Asien schon durchbrochen. Keine Sweeps." },
+    { title: "Sweep unten, dann Ausbruch", start: 55,
+      vt: [56,57,56,55,56,57,58,57,56,57],
+      asia: [56.5,56,56.5,57,57.5,57,56.5,56,56.5,57,56.5,57],
+      london: [56.5,[56,56.6,54.9],56.5,57,57.5,58,58.6,59,59.2,59.5],
+      ny: [60.5,61,62,61,63,64,63,65,64,66,65,67],
+      why1: "Die Lunte in London holt das Asien-Tief, danach läuft der Preis über das Asien-Hoch und das Vortageshoch und bleibt dort. Unten ein Sweep, oben zwei Durchbrüche. Die Durchbrüche zählen nicht, also nur unten." },
+    { title: "Sweep oben, dann Abverkauf", start: 55,
+      vt: [54,53,54,55,54,53,52,53,54,53],
+      asia: [53.5,54,53.5,53,52.5,53,53.5,54,53.5,53,53.5,53],
+      london: [53.5,[54,55.1,53.4],53.5,53,52.5,52,51.4,51,50.8,50.5],
+      ny: [49.5,49,48,49,47,46,47,45,44,45,43,44],
+      why1: "Ein Docht in London holt das Asien-Hoch, danach fällt der Preis unter das Asien-Tief und das Vortagestief und bleibt unten. Oben ein Sweep, unten Durchbrüche. Also nur oben." },
+    { title: "Asien holt das Vortagestief", start: 55,
+      vt: [56,57,58,57,56,57,58,57,56,57],
+      asia: [56,55,54,53.5,54,55,56,56.5,57,56.5,57,56.5],
+      london: [56.5,56,56.5,56.2,56.6,56,56.4,56.6,56.3,56.5],
+      ny: [57.5,58,59,58,60,59,61,60,62,61,63,62],
+      why1: "Asien schließt mehrere Kerzen unter dem Vortagestief und kommt danach zurück. London bleibt ruhig in der Asien-Spanne. Um 15:30 steht der Preis über dem Vortagestief: Sweep unten." },
+    { title: "Zwei Sessions, zwei Seiten", start: 50,
+      vt: [51,52,53,52,51,50,51,52,51,52],
+      asia: [52.5,53,53.5,54,54.5,54,53,52.5,52,52.5,53,52.5],
+      london: [52,51.5,51,50.8,51.2,52,52.5,52.8,52.5,52.6],
+      ny: [53.5,54,53,55,56,55,57,56,58,57,59,58],
+      why1: "Asien läuft über das Vortageshoch und fällt zurück: Sweep oben. London läuft über mehrere Kerzen unter das Asien-Tief und kommt zurück: Sweep unten. Beide Seiten, also keiner." }
+  ];
+
+  function blank() { return { s1: null, s2: null, s3: null, tip: false }; }
+  var state = SCENARIOS.map(blank);
+  try {
+    var saved = JSON.parse(localStorage.getItem("bias-lektion-v4") || "null");
+    if (Array.isArray(saved) && saved.length === SCENARIOS.length) state = saved;
+  } catch (e) {}
+  function save() { try { localStorage.setItem("bias-lektion-v4", JSON.stringify(state)); } catch (e) {} }
+
+  function price(v) { return (7480 + v * 2).toFixed(1).replace(".", ","); }
+
+  function analyse(sc) {
+    var bars = [], prev = sc.start, R = {}, n = 0;
+    SESS.forEach(function (s) {
+      var from = bars.length;
+      sc[s.key].forEach(function (spec) {
+        var w = 0.35 + ((n * 7) % 4) * 0.1;
+        var c, h, l;
+        if (Array.isArray(spec)) { c = spec[0]; h = spec[1]; l = spec[2]; }
+        else { c = spec; h = Math.max(prev, c) + w; l = Math.min(prev, c) - w; }
+        bars.push({ o: prev, c: c, h: h, l: l, s: s.key });
+        prev = c; n++;
+      });
+      R[s.key] = [from, bars.length - 1];
+    });
+    var openEnd = R.london[1], close = bars[openEnd].c;
+    var levels = [];
+    ["vt", "asia", "london"].forEach(function (k) {
+      var r = R[k], hi = -1e9, lo = 1e9;
+      for (var i = r[0]; i <= r[1]; i++) { hi = Math.max(hi, bars[i].h); lo = Math.min(lo, bars[i].l); }
+      levels.push({ id: k + "H", name: LEVEL_NAME[k] + "-Hoch", tag: LEVEL_NAME[k] + " H", v: hi, side: "up", sess: k, end: r[1] });
+      levels.push({ id: k + "L", name: LEVEL_NAME[k] + "-Tief", tag: LEVEL_NAME[k] + " T", v: lo, side: "down", sess: k, end: r[1] });
+    });
+    var events = [];
+    levels.forEach(function (L) {
+      L.open = true; L.touch = null;
+      for (var i = L.end + 1; i <= openEnd; i++) {
+        var hit = L.side === "up" ? bars[i].h > L.v : bars[i].l < L.v;
+        if (!hit) continue;
+        L.open = false; L.touch = i;
+        var beyond = L.side === "up" ? close > L.v : close < L.v;
+        L.kind = beyond ? "break" : "sweep";
+        events.push({ idx: i, level: L, kind: L.kind });
+        break;
+      }
+    });
+    var lowSweep = events.some(function (e) { return e.kind === "sweep" && e.level.side === "down"; });
+    var highSweep = events.some(function (e) { return e.kind === "sweep" && e.level.side === "up"; });
+    var side = lowSweep && highSweep ? "both" : lowSweep ? "low" : highSweep ? "high" : "none";
+    var dir = side === "low" ? "bull" : side === "high" ? "bear" : "none";
+    var targets = levels.filter(function (L) {
+      if (!L.open) return false;
+      if (dir === "bull") return L.side === "up" && L.v > close;
+      if (dir === "bear") return L.side === "down" && L.v < close;
+      return false;
+    }).sort(function (a, b) { return Math.abs(a.v - close) - Math.abs(b.v - close); });
+    var rule = targets.length ? dir : "none";
+    var hit = null;
+    for (var k = R.ny[0]; k <= R.ny[1] && !hit; k++) {
+      var best = null;
+      levels.forEach(function (L) {
+        if (!L.open) return;
+        var t = L.side === "up" ? bars[k].h > L.v : bars[k].l < L.v;
+        if (!t) return;
+        var d = Math.abs(L.v - bars[k].o);
+        if (!best || d < best.d) best = { L: L, d: d };
+      });
+      if (best) hit = { level: best.L, idx: k };
+    }
+    return { bars: bars, R: R, levels: levels, events: events, side: side, rule: rule, close: close, target: targets[0] || null, targets: targets, hit: hit };
+  }
+
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  function drawChart(a, opt, idx) {
+    var W = 760, H = 360, pl = 8, pr = 124, pt = 16, pb = 34;
+    var bars = a.bars, R = a.R, gap = 2;
+    var sw = (W - pl - pr) / (bars.length + gap);
+    function slotOf(i) { return i > R.vt[1] ? i + gap : i; }
+    function xc(i) { return pl + (slotOf(i) + 0.5) * sw; }
+    function xr(i) { return pl + (slotOf(i) + 1) * sw; }
+    var lo = 1e9, hi = -1e9;
+    bars.forEach(function (b) { if (opt.reveal || b.s !== "ny") { lo = Math.min(lo, b.l); hi = Math.max(hi, b.h); } });
+    if (!opt.reveal) { lo -= 2; hi += 2; }
+    var pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+    function y(v) { return pt + (hi - v) / (hi - lo) * (H - pt - pb); }
+
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Übungschart " + (idx + 1) });
+
+    SESS.forEach(function (s) {
+      var r = R[s.key], x0 = pl + slotOf(r[0]) * sw, x1 = xr(r[1]);
+      el("rect", { x: x0, y: pt, width: x1 - x0, height: H - pt - pb, fill: s.color, "fill-opacity": s.key === "ny" ? 0.05 : 0.1 }, svg);
+      el("text", { x: x0 + 4, y: H - pb + 15, "font-size": 11, fill: "var(--muted)" }, svg, s.t);
+      el("text", { x: x0 + 4, y: H - pb + 29, "font-size": 10.5, fill: s.color }, svg, s.label);
+    });
+
+    var nyX = pl + slotOf(R.ny[0]) * sw;
+    var lx = W - pr;
+
+    // Level-Linien: kräftig bis zur ersten Berührung, danach blass
+    var labels = [];
+    a.levels.forEach(function (L) {
+      var color = SESS.find(function (s) { return s.key === L.sess; }).color;
+      var x0 = xr(L.end), yy = y(L.v);
+      var isTarget = opt.target && a.target && a.target.id === L.id;
+      if (L.touch != null) {
+        var xt = xc(L.touch);
+        el("line", { x1: x0, y1: yy, x2: xt, y2: yy, stroke: color, "stroke-width": 1.4 }, svg);
+        el("line", { x1: xt, y1: yy, x2: lx + 4, y2: yy, stroke: color, "stroke-width": 1, "stroke-dasharray": "2 4", opacity: 0.45 }, svg);
+      } else {
+        el("line", { x1: x0, y1: yy, x2: lx + 4, y2: yy, stroke: color, "stroke-width": isTarget ? 2.6 : 1.4 }, svg);
+      }
+      labels.push({ y: yy, text: (isTarget ? "Ziel · " : "") + L.tag + " " + price(L.v), color: color, faded: L.touch != null, bold: isTarget });
+    });
+
+    // Kurs um 15:30
+    var yc = y(a.close);
+    el("line", { x1: pl + slotOf(R.asia[0]) * sw, y1: yc, x2: lx + 4, y2: yc, stroke: "var(--open)", "stroke-width": 1.8, opacity: 0.9 }, svg);
+    labels.push({ y: yc, text: "Kurs 15:30 " + price(a.close), color: "var(--open)", faded: false, bold: true });
+    el("line", { x1: nyX, y1: pt, x2: nyX, y2: H - pb, stroke: "var(--open)", "stroke-width": 1.4, "stroke-dasharray": "2 3" }, svg);
+
+    labels.sort(function (p, q) { return p.y - q.y; });
+    for (var i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 13) labels[i].y = labels[i - 1].y + 13;
+    var over = labels.length ? labels[labels.length - 1].y - (H - pb - 2) : 0;
+    if (over > 0) labels.forEach(function (l) { l.y -= over; });
+    for (var j = labels.length - 2; j >= 0; j--) if (labels[j + 1].y - labels[j].y < 13) labels[j].y = labels[j + 1].y - 13;
+    labels.forEach(function (l) {
+      el("text", { x: lx + 8, y: l.y + 4, "font-size": 10.5, fill: l.color, opacity: l.faded ? 0.55 : 1, "font-weight": l.bold ? 700 : 400 }, svg, l.text);
+    });
+
+    // Kerzen
+    var bw = Math.max(3, sw * 0.6);
+    bars.forEach(function (b, i) {
+      if (b.s === "ny" && !opt.reveal) return;
+      var x = xc(i), up = b.c >= b.o;
+      el("line", { x1: x, y1: y(b.h), x2: x, y2: y(b.l), stroke: "var(--fg)", "stroke-width": 1.2 }, svg);
+      var top = y(Math.max(b.o, b.c)), bot = y(Math.min(b.o, b.c));
+      el("rect", { x: x - bw / 2, y: top, width: bw, height: Math.max(1.5, bot - top), fill: up ? "var(--surface)" : "var(--fg)", stroke: "var(--fg)", "stroke-width": 1.2 }, svg);
+    });
+
+    // S/D-Markierungen an der ersten Berührung
+    if (opt.marks) {
+      var used = {};
+      a.events.forEach(function (ev) {
+        var b = bars[ev.idx], x = xc(ev.idx);
+        var key = ev.idx + ev.level.side;
+        var stack = used[key] || 0; used[key] = stack + 1;
+        var sweep = ev.kind === "sweep";
+        var col = sweep ? "var(--hint)" : "var(--muted)";
+        var cy = ev.level.side === "up" ? y(b.h) - 12 - stack * 18 : y(b.l) + 12 + stack * 18;
+        el("circle", { cx: x, cy: cy, r: 8, fill: col }, svg);
+        el("text", { x: x, y: cy + 3.5, "text-anchor": "middle", "font-size": 10, "font-weight": 700, fill: "var(--surface)" }, svg, sweep ? "S" : "D");
+      });
+    }
+
+    if (!opt.reveal) {
+      var x1n = xr(R.ny[1]);
+      el("rect", { x: (nyX + x1n) / 2 - 42, y: (pt + H - pb) / 2 - 26, width: 84, height: 50, rx: 6, fill: "var(--surface)", stroke: "var(--line)" }, svg);
+      el("text", { x: (nyX + x1n) / 2, y: (pt + H - pb) / 2 - 4, "text-anchor": "middle", "font-size": 22, fill: "var(--open)" }, svg, "?");
+      el("text", { x: (nyX + x1n) / 2, y: (pt + H - pb) / 2 + 16, "text-anchor": "middle", "font-size": 10.5, fill: "var(--muted)" }, svg, "ab 15:30 DE");
+    } else if (a.hit) {
+      var hc = a.hit.level.side === "up" ? "var(--bull)" : "var(--bear)";
+      el("circle", { cx: xc(a.hit.idx), cy: y(a.hit.level.v), r: 7, fill: "none", stroke: hc, "stroke-width": 2.4 }, svg);
+    }
+    return svg;
+  }
+
+  function verdict(rule, hit) {
+    if (rule === "none") return { cls: "neutral", text: "Nicht gewertet" };
+    if (!hit) return { cls: "neutral", text: "Kein Level erreicht" };
+    var ok = (rule === "bull" && hit.level.side === "up") || (rule === "bear" && hit.level.side === "down");
+    return ok ? { cls: "ok", text: "Treffer" } : { cls: "bad", text: "Fehler" };
+  }
+
+  function stepBlock(num, done, title, sub) {
+    var d = document.createElement("div");
+    d.className = "step";
+    d.innerHTML = '<div class="step-q"><span class="n' + (done ? " done" : "") + '">' + num + '</span><p>' + title + (sub ? '<small>' + sub + '</small>' : '') + '</p></div>';
+    return d;
+  }
+
+  function choiceRow(idx, key, options, picked, correct, onPick, label) {
+    var row = document.createElement("div");
+    row.className = "choices";
+    row.setAttribute("role", "group");
+    row.setAttribute("aria-label", label);
+    options.forEach(function (o) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.id = "ex" + idx + "-" + key + "-" + o.v;
+      b.textContent = o.t;
+      if (picked != null) {
+        b.disabled = true;
+        if (o.v === correct) b.classList.add("right");
+        else if (o.v === picked) b.classList.add("wrong");
+      }
+      b.addEventListener("click", function () { onPick(o.v); });
+      row.appendChild(b);
+    });
+    return row;
+  }
+
+  function fb(html) {
+    var d = document.createElement("div");
+    d.className = "fb";
+    d.innerHTML = html;
+    return d;
+  }
+
+  function eventList(a) {
+    if (!a.events.length) return "<p>Berührte Level: keine.</p>";
+    var items = a.events.slice().sort(function (p, q) { return p.idx - q.idx; }).map(function (e) {
+      var rel = e.level.side === "up" ? (e.kind === "sweep" ? "Kurs 15:30 darunter" : "Kurs 15:30 darüber") : (e.kind === "sweep" ? "Kurs 15:30 darüber" : "Kurs 15:30 darunter");
+      return "<li>" + e.level.name + " " + price(e.level.v) + ": " + rel + " → <b>" + (e.kind === "sweep" ? "Sweep" : "Durchbruch") + "</b></li>";
+    });
+    return '<ul style="margin:0;padding-left:1.2em;display:grid;gap:2px">' + items.join("") + "</ul>";
+  }
+
+  var host = document.getElementById("exercises");
+
+  function render() {
+    host.innerHTML = "";
+    var right = 0, answered = 0, hits = 0, counted = 0;
+
+    SCENARIOS.forEach(function (sc, idx) {
+      var a = analyse(sc), st = state[idx];
+      var needsTarget = a.side === "low" || a.side === "high";
+      var step2Done = !needsTarget || st.s2 != null;
+      var reveal = st.s3 != null;
+      var marks = st.s1 != null || st.tip;
+
+      var card = document.createElement("article");
+      card.className = "ex";
+      var head = document.createElement("div");
+      head.className = "ex-head";
+      head.innerHTML = '<h3>Übung ' + (idx + 1) + ' · ' + sc.title + '</h3>';
+      if (st.s1 == null && !st.tip) {
+        var tip = document.createElement("button");
+        tip.type = "button"; tip.className = "tip"; tip.id = "ex" + idx + "-tip";
+        tip.textContent = "Tipp: S/D zeigen";
+        tip.addEventListener("click", function () { state[idx].tip = true; save(); render(); });
+        head.appendChild(tip);
+      } else {
+        var sp = document.createElement("span");
+        sp.className = "eyebrow";
+        sp.textContent = reveal ? "aufgelöst" : "in Arbeit";
+        head.appendChild(sp);
+      }
+      card.appendChild(head);
+
+      var chart = document.createElement("div");
+      chart.className = "chart";
+      chart.appendChild(drawChart(a, { reveal: reveal, marks: marks, target: st.s2 != null }, idx));
+      card.appendChild(chart);
+      var lg = document.createElement("div");
+      lg.className = "legend";
+      lg.innerHTML = '<span style="color:var(--open)">━ Kurs um 15:30</span><span>━ Level offen</span><span>┄ Level berührt</span>' + (marks ? '<span style="color:var(--hint)">● S = Sweep</span><span>● D = Durchbruch</span>' : '');
+      card.appendChild(lg);
+
+      var s1 = stepBlock(1, st.s1 != null, "Auf welcher Seite liegen die Sweeps?", "Für jedes berührte Level: Steht die blaue Linie (Kurs 15:30) wieder diesseits, ist es ein Sweep. Steht sie jenseits, ein Durchbruch.");
+      s1.appendChild(choiceRow(idx, "s1", [
+        { v: "low", t: SIDE.low }, { v: "high", t: SIDE.high }, { v: "both", t: SIDE.both }, { v: "none", t: SIDE.none }
+      ], st.s1, a.side, function (v) { state[idx].s1 = v; save(); render(); }, "Frage 1"));
+      if (st.s1 != null) {
+        answered++; if (st.s1 === a.side) right++;
+        s1.appendChild(fb('<p><span class="pill ' + (st.s1 === a.side ? "ok" : "bad") + '">' + (st.s1 === a.side ? "Richtig" : "Richtig wäre: " + SIDE[a.side]) + '</span></p><p>' + sc.why1 + '</p>' + eventList(a)));
+      }
+      card.appendChild(s1);
+
+      if (st.s1 != null) {
+        if (needsTarget) {
+          var dirWord = a.side === "low" ? "oben" : "unten";
+          var s2 = stepBlock(2, st.s2 != null, "Welches offene Level ist das erste Ziel?", "Die Sweeps liegen " + (a.side === "low" ? "unten" : "oben") + ", also suchst du das nächste offene Level " + dirWord + " über bzw. unter der blauen Linie.");
+          var opts = a.levels.filter(function (L) { return L.open; }).map(function (L) { return { v: L.id, t: L.name + " " + price(L.v) }; });
+          s2.appendChild(choiceRow(idx, "s2", opts, st.s2, a.target ? a.target.id : null, function (v) { state[idx].s2 = v; save(); render(); }, "Frage 2"));
+          if (st.s2 != null) {
+            answered++;
+            var ok2 = a.target && st.s2 === a.target.id;
+            var sideOk = a.targets.some(function (L) { return L.id === st.s2; });
+            if (ok2) right++;
+            var msg = ok2 ? "Richtig. Das ist das nächste offene Level " + dirWord + "."
+              : sideOk ? "Richtige Seite, aber nicht das nächste. Das erste Ziel ist " + a.target.name + "."
+              : "Falsche Seite. Das erste Ziel ist " + a.target.name + ".";
+            s2.appendChild(fb('<p><span class="pill ' + (ok2 ? "ok" : "bad") + '">' + (ok2 ? "Richtig" : "Nicht ganz") + '</span></p><p>' + msg + ' Im Chart ist es jetzt dick und mit „Ziel“ beschriftet.</p>'));
+          }
+          card.appendChild(s2);
+        } else {
+          card.appendChild(stepBlock(2, true, "Welches offene Level ist das erste Ziel?", "Entfällt: " + (a.side === "both" ? "Sweeps auf beiden Seiten" : "keine Sweeps") + ", also keine Richtung und kein Ziel."));
+        }
+      }
+
+      if (st.s1 != null && step2Done) {
+        var s3 = stepBlock(3, st.s3 != null, "Welchen Bias trägst du ein?", "Nur Sweeps unten: bullish. Nur Sweeps oben: bearish. Beide Seiten oder keine: keiner.");
+        s3.appendChild(choiceRow(idx, "s3", [{ v: "bull", t: NAMES.bull }, { v: "bear", t: NAMES.bear }, { v: "none", t: NAMES.none }], st.s3, a.rule, function (v) { state[idx].s3 = v; save(); render(); }, "Frage 3"));
+        card.appendChild(s3);
+      }
+
+      if (reveal) {
+        answered++; if (st.s3 === a.rule) right++;
+        var vd = verdict(a.rule, a.hit);
+        if (vd.cls !== "neutral") { counted++; if (vd.cls === "ok") hits++; }
+        var hitText = a.hit ? a.hit.level.name + " " + price(a.hit.level.v) + " (" + (a.hit.level.side === "up" ? "oben" : "unten") + ")" : "keins";
+        var extra = vd.cls === "bad" ? "<p>Die Regel war richtig angewendet, und trotzdem kam es anders. Das gehört dazu. Ob die Regel taugt, zeigt erst die Trefferquote über viele Tage.</p>"
+          : a.rule === "none" ? "<p>Ohne Bias bleibt der Tag aus der Wertung. Was NY danach macht, ist für die Statistik egal.</p>" : "";
+        var res = document.createElement("div");
+        res.className = "result";
+        res.innerHTML = '<h3>Was nach 15:30 passiert ist</h3>' +
+          '<dl><dt>Dein Bias</dt><dd>' + NAMES[st.s3] + (st.s3 === a.rule ? ' <span class="pill ok">nach Regel</span>' : ' <span class="pill bad">Regel: ' + NAMES[a.rule] + '</span>') + '</dd>' +
+          '<dt>Zuerst geholt</dt><dd>' + hitText + ' · im Chart eingekreist</dd>' +
+          '<dt>Wertung</dt><dd><span class="pill ' + vd.cls + '">' + vd.text + '</span></dd></dl>' + extra;
+        card.appendChild(res);
+      }
+      host.appendChild(card);
+    });
+
+    document.getElementById("sc-steps").textContent = right + " / " + answered;
+    document.getElementById("sc-hit").textContent = counted ? hits + " von " + counted + " gewerteten" : "–";
+  }
+
+  document.getElementById("reset-all").addEventListener("click", function () {
+    state = SCENARIOS.map(blank);
+    save();
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

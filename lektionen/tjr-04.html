@@ -1,0 +1,377 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Trading-Kurs Lektion 4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: single reading column like a trading playbook page; chart-grid paper ground, candle colours only for up/down and right/wrong */
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --fg:#17202b; --muted:#5a6675; --line:#d7dde4;
+  --grid:rgba(23,32,43,.045); --accent:#1f5fa8; --accent-soft:#e3ecf7;
+  --bull:#11845b; --bull-soft:#e1f3eb; --bear:#c2412d; --bear-soft:#fbe7e3; --warn:#9a6a00; --warn-soft:#fbf1d6;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141a; --paper:#161d25; --fg:#e4e9ef; --muted:#97a3b1; --line:#2a3440;
+  --grid:rgba(228,233,239,.04); --accent:#6ea6e8; --accent-soft:#1b2b3f;
+  --bull:#3fc490; --bull-soft:#13302a; --bear:#ef7a66; --bear-soft:#3a1d19; --warn:#e2b54a; --warn-soft:#352b12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141a; --paper:#161d25; --fg:#e4e9ef; --muted:#97a3b1; --line:#2a3440;
+  --grid:rgba(228,233,239,.04); --accent:#6ea6e8; --accent-soft:#1b2b3f;
+  --bull:#3fc490; --bull-soft:#13302a; --bear:#ef7a66; --bear-soft:#3a1d19; --warn:#e2b54a; --warn-soft:#352b12; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16.5px;line-height:1.6;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.45rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:.82rem}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.prose{max-width:65ch;display:flex;flex-direction:column;gap:12px}
+header{display:flex;flex-direction:column;gap:14px;padding-bottom:6px}
+.ticker{display:flex;flex-wrap:wrap;gap:8px}
+.ticker span{font-family:var(--f-mono);font-size:.75rem;border:1px solid var(--line);background:var(--paper);padding:3px 9px;border-radius:4px;color:var(--muted)}
+.ticker span b{color:var(--fg);font-weight:600}
+.lead{font-size:1.12rem;color:var(--muted);max-width:60ch}
+section.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec-head{display:flex;align-items:baseline;gap:12px}
+.sec-head .n{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);font-weight:600}
+.callout{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:0 8px 8px 0}
+.callout.blue{border-color:var(--accent);background:var(--accent-soft)}
+
+/* guess game */
+.game-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.chartbox{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;border:1px solid var(--line);border-radius:8px;background:var(--bg);overflow:hidden}
+.chartbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:inherit;font-weight:600;color:var(--paper);background:var(--accent);border:0;border-radius:6px;padding:9px 14px;cursor:pointer}
+.btn.up{background:var(--bull)} .btn.down{background:var(--bear)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.result{font-weight:600}
+.result.ok{color:var(--bull)} .result.no{color:var(--bear)}
+.tally{display:flex;gap:6px;flex-wrap:wrap}
+.tally i{width:14px;height:14px;border-radius:3px;border:1px solid var(--line);display:block}
+.tally i.ok{background:var(--bull);border-color:var(--bull)} .tally i.no{background:var(--bear);border-color:var(--bear)}
+
+/* expectancy */
+.calc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+label{font-size:.85rem;font-weight:600;display:flex;flex-direction:column;gap:6px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--accent)}
+.out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.out div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.out b{font-family:var(--f-mono);font-size:1.35rem;font-variant-numeric:tabular-nums}
+.out span{font-size:.8rem;color:var(--muted)}
+.pos{color:var(--bull)} .neg{color:var(--bear)}
+.bar{position:relative;height:14px;border-radius:7px;background:var(--bear-soft);overflow:hidden}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--accent)}
+.bar .be{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--fg)}
+.bar-legend{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.terms div{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.terms b{font-family:var(--f-display)}
+
+/* quiz */
+.q{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.q:first-of-type{border-top:0;padding-top:0}
+.q p.qt{font-weight:600}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:inherit;text-align:left;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt[disabled]{cursor:default}
+.opt.right{background:var(--bull-soft);border-color:var(--bull)}
+.opt.wrong{background:var(--bear-soft);border-color:var(--bear)}
+.fb{font-size:.92rem;color:var(--muted)}
+.fb strong.ok{color:var(--bull)} .fb strong.no{color:var(--bear)}
+.score{display:flex;flex-wrap:wrap;align-items:center;gap:12px;border-radius:8px;padding:12px 14px;background:var(--accent-soft)}
+.score b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pill{font-family:var(--f-mono);font-size:.75rem;padding:3px 9px;border-radius:999px;border:1px solid currentColor}
+.pill.pass{color:var(--bull)} .pill.open{color:var(--muted)} .pill.fail{color:var(--bear)}
+textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-height:96px;resize:vertical;line-height:1.5}
+.rule{border:2px solid var(--fg);border-radius:10px;padding:18px clamp(16px,4vw,24px);display:flex;flex-direction:column;gap:8px;background:var(--paper)}
+.rule p.r{font-family:var(--f-display);font-size:1.2rem;font-weight:700;line-height:1.3}
+.next{color:var(--muted);font-size:.92rem}
+@media (max-width:560px){.calc,.out,.terms{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:inherit;font-size:.9rem;font-weight:600;background:var(--paper);color:var(--muted);border:0;padding:7px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.chartbox.tall{aspect-ratio:4/3}
+.chartbox.click canvas{cursor:crosshair}
+.anat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+.anat .chartbox{aspect-ratio:1/1}
+.legend{display:flex;flex-direction:column;gap:8px}
+.legend div{display:grid;grid-template-columns:70px 1fr;gap:8px}
+.legend b{font-family:var(--f-mono);font-size:.85rem}
+.kv{display:flex;flex-wrap:wrap;gap:8px}
+.kv span{font-family:var(--f-mono);font-size:.8rem;font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:5px;padding:3px 8px}
+.ex-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.drill{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:16px;align-items:center}
+.drill .chartbox{aspect-ratio:3/4}
+.abcd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.abcd .btn{padding:10px 0}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+@media (max-width:560px){.anat,.drill{grid-template-columns:1fr}.drill .chartbox{max-width:220px;margin:0 auto;width:100%}}
+
+.ex{display:flex;flex-direction:column;gap:12px}
+.ex .qt{font-weight:600}
+.sim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.chartbox.wide{aspect-ratio:2/1}
+.chartbox.dual{aspect-ratio:7/6}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.statgrid div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.statgrid b{font-family:var(--f-mono);font-size:1.3rem;font-variant-numeric:tabular-nums;color:var(--accent)}
+.statgrid span{font-size:.8rem;color:var(--muted)}
+select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+input[type=number]{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.steps4 div{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.steps4 .k{font-family:var(--f-mono);font-size:.75rem;color:var(--accent);font-weight:600}
+@media (max-width:560px){.sim,.steps4{grid-template-columns:1fr 1fr}}
+@media (max-width:380px){.sim,.steps4{grid-template-columns:1fr}}
+p.prose{display:block}
+</style>
+<main>
+<header>
+  <div class="ticker"><span>Block <b>A · Fundament</b></span><span>Lektion <b>04</b> / 16</span><span>Lesezeit <b>~25 Min.</b></span><span>Quelle: TJR · Risk Management & Psychology</span></div>
+  <h1>Risiko & Psychologie</h1>
+  <p class="lead">Die beste Strategie nützt nichts, wenn ein schlechter Tag dein Konto zerstört. Hier lernst du, wie viel du pro Trade riskierst, wie du die Positionsgröße rechnest und warum Verlustserien normal sind.</p>
+  <div class="row"><span class="eyebrow">Kerzenfarben</span><div class="seg" role="group" aria-label="Kerzenfarben"><button type="button" id="col-gr" aria-pressed="true">Grün / Rot</button><button type="button" id="col-tjr" aria-pressed="false">Neutral wie TJR</button></div></div>
+</header>
+<section class="card"><div class="sec-head"><span class="n">1</span><h2>Drei Fähigkeiten, nicht eine</h2></div><div class="prose">
+<p>TJR stellt diese Lektion bewusst vor die Strategie. Sein Grund: Sonst schauen viele nur das Strategie-Video und verschwinden. Profitabel wird nur, wer drei Fähigkeiten zusammen beherrscht:</p></div>
+<div class="terms">
+<div><b>Strategie</b><span>Ein Plan mit belegten Zahlen: positive Trefferquote und positives CRV, nachgewiesen im Journal.</span></div>
+<div><b>Risikomanagement</b><span>Gleiches, kleines Risiko pro Trade. Das Konto überlebt auch mehrere Verlustserien.</span></div>
+<div><b>Psychologie</b><span>Die Disziplin, beide Pläne einzuhalten. Mehr ist es nicht.</span></div>
+<div><b>Ergebnis</b><span>Gute Psychologie entsteht von selbst, wenn du Strategie und Risiko konsequent umsetzt.</span></div>
+</div>
+<p class="callout blue">TJR sagt offen: Es gibt keinen Motivationstrick für Psychologie. Du nimmst einen Trade nur, wenn die Strategie ihn verlangt. Punkt.</p></section>
+<section class="card"><div class="sec-head"><span class="n">2</span><h2>Die drei Over-Fehler</h2></div><div class="terms">
+<div><b>Overtrading</b><span>Zu viele Trades. Du handelst, weil du handeln willst, nicht weil ein Setup da ist.</span></div>
+<div><b>Overleveraging</b><span>Zu große Position für dein Konto.</span></div>
+<div><b>Overrisking</b><span>Zu viel Risiko pro Trade. Ein schlechter Tag zerstört Wochen Arbeit.</span></div>
+<div><b>Ursache</b><span>Fast immer der Wunsch, schnell reich zu werden. TJR vergleicht das mit Lottoscheinen.</span></div>
+</div></section>
+<section class="card"><div class="sec-head"><span class="n">3</span><h2>Wie viel riskieren?</h2></div><div class="prose">
+<p>TJR nennt <strong>1 bis 3 % pro Trade</strong>, ausdrücklich nicht 5, 10 oder 20 %. Früher hat er 1 % gerechnet, heute handelt er eine feste Anzahl Kontrakte. Zwei Ausnahmen, bei denen er die Größe <strong>halbiert</strong>:</p>
+<ul class="steps"><li>Der Stop-Loss ist ungewöhnlich groß.</li><li>Es kommen wichtige Wirtschaftsdaten (z. B. CPI, PPI, Zinsentscheid).</li></ul>
+</div>
+<p class="callout"><strong>Einordnung vom Profi:</strong> 3 % sind für dein FTMO-Konto zu viel. In der 2-Step-Challenge liegt das Tagesverlust-Limit bei 5 % und das Gesamtlimit bei 10 %. Mit 3 % pro Trade bist du nach zwei Verlusten fast am Tageslimit. Mit 0,5–1 % hast du 5–10 Fehlversuche Luft pro Tag. Bleib bis zum Ende des Backtests bei <strong>max. 1 %</strong>.</p>
+<h3>Typische Stop-Größen in deinen Daten</h3>
+<p class="prose">Median der Kerzenlänge im 5-Minuten-Chart zwischen 09:30 und 10:30 New York, letzte 6 Monate. Ein Stop hinter einem Hoch oder Tief ist meist 1–3 solcher Kerzen groß.</p>
+<div class="statgrid">
+<div><b>8,3</b><span>Punkte · US 500, Median</span></div>
+<div><b>12,0</b><span>Punkte · US 500, jede 4. Kerze größer</span></div>
+<div><b>62</b><span>Punkte · US TECH 100, Median</span></div>
+<div><b>89</b><span>Punkte · US TECH 100, jede 4. Kerze größer</span></div>
+</div></section>
+<section class="card"><div class="sec-head"><span class="n">4</span><h2>Positionsgrößen-Rechner</h2></div><p class="prose">So rechnest du jede Position, bevor du klickst. Den <strong>Wert pro Punkt je Lot</strong> findest du in cTrader unter Symbol-Info (Rechtsklick auf das Symbol → Informationen). Prüfe ihn einmal für US 500 und US TECH 100 und trag ihn hier ein.</p>
+<div class="sim">
+<label for="p-acct">Kontogröße (€)<input id="p-acct" type="number" min="100" step="100" value="10000"></label>
+<label for="p-risk">Risiko pro Trade (%)<input id="p-risk" type="number" min="0.1" max="5" step="0.1" value="1"></label>
+<label for="p-stop">Stop-Abstand (Punkte)<input id="p-stop" type="number" min="0.5" step="0.5" value="10"></label>
+<label for="p-ppl">Wert pro Punkt je Lot (€)<input id="p-ppl" type="number" min="0.01" step="0.01" value="1"></label>
+<label for="p-news">Besonderer Tag?<select id="p-news"><option value="1">Normal</option><option value="0.5">News oder großer Stop: halbieren</option></select></label>
+</div>
+<div class="out" aria-live="polite"><div><b id="p-eur">100 €</b><span>Risiko in Euro</span></div><div><b id="p-lots">10,00</b><span>Lots</span></div><div><b id="p-loss">10</b><span>Verluste in Folge bis −10 %</span></div></div></section>
+<section class="card"><div class="sec-head"><span class="n">5</span><h2>Übung A: Position berechnen</h2></div><p class="prose">Echte 5-Minuten-Charts aus deinem US 500. Der Einstieg liegt nach einem Strukturbruch nach oben, der Stop unter dem letzten Tief. Rechne die Positionsgröße.</p><div class="ex" id="ex-pos"></div></section>
+<section class="card"><div class="sec-head"><span class="n">6</span><h2>Übung B: Verlustserien sind normal</h2></div><p class="prose">Auch eine gute Strategie hat Pechsträhnen. Der Simulator spielt 1.000-mal je 100 Trades mit deinen Werten durch. Achte auf den <strong>größten Rückgang</strong> und die <strong>längste Verlustserie</strong>. Genau dafür ist kleines Risiko da.</p>
+<div class="sim">
+<label for="s-win">Trefferquote <span class="val" id="s-win-v">45 %</span><input id="s-win" type="range" min="20" max="70" value="45"></label>
+<label for="s-rr">CRV 1 : <span class="val" id="s-rr-v">2,0</span><input id="s-rr" type="range" min="0.5" max="4" step="0.1" value="2"></label>
+<label for="s-risk">Risiko <span class="val" id="s-risk-v">1,0 %</span><input id="s-risk" type="range" min="0.25" max="5" step="0.25" value="1"></label>
+</div>
+<div class="chartbox wide"><canvas id="s-canvas" aria-label="20 simulierte Kontoverläufe über 100 Trades"></canvas></div>
+<div class="statgrid" aria-live="polite">
+<div><b id="s-med">–</b><span>Kontostand nach 100 Trades (Median)</span></div>
+<div><b id="s-dd">–</b><span>Größter Rückgang (Median)</span></div>
+<div><b id="s-ftmo">–</b><span>Läufe, die −10 % erreichen</span></div>
+<div><b id="s-streak">–</b><span>Längste Verlustserie (Median)</span></div>
+</div>
+<p class="callout" id="s-note"></p></section>
+<section class="card"><div class="sec-head"><span class="n">7</span><h2>Challenge oder Auszahlungskonto</h2></div><div class="prose">
+<p>TJR unterscheidet zwei Situationen. In der <strong>Challenge</strong> riskieren viele das Maximum, um schnell zu bestehen. Auf dem <strong>Auszahlungskonto</strong> reduziert er das Risiko, weil ein einzelner Trade das Konto nicht mehr gefährden darf.</p>
+<p>Prüfe bei jeder Prop-Firm: Wie wird der Drawdown berechnet (statisch, nachlaufend, am Tagesende)? Gibt es eine Konsistenzregel? Mehr dazu in Lektion 16.</p>
+<p><strong>Für dich:</strong> Im FTMO-Konto gilt das Tageslimit auf Basis des Kontostands um Mitternacht, inklusive offener Positionen. Ein Trade, der über Nacht läuft, zählt also mit.</p></div></section>
+<section class="card"><div class="sec-head"><span class="n">8</span><h2>Quiz</h2></div><p class="prose">Bestanden ab 80 %. Enthält Wiederholungsfragen aus früheren Lektionen.</p><div id="quiz"></div></section>
+<section class="card"><div class="sec-head"><span class="n">9</span><h2>Zurückerklären</h2></div><div id="explain" class="ex"><p class="prose">Erkläre in 3–4 eigenen Sätzen: Wie rechnest du die Positionsgröße für einen Trade, und warum riskierst du im FTMO-Konto höchstens 1 %?</p><label for="explain-ta" class="eyebrow">Deine Erklärung<textarea id="explain-ta" placeholder="In eigenen Worten …"></textarea></label><div class="row"><button class="btn" type="button" data-r="copy">Text kopieren</button><span data-r="copied" class="mono" hidden>Kopiert</span></div></div></section>
+<div class="rule"><span class="eyebrow">Regel aus Lektion 4</span><p class="r">Ich riskiere pro Trade höchstens 1 % und rechne die Positionsgröße vor jedem Einstieg: Risiko in € ÷ Stop-Abstand ÷ Wert pro Punkt. Bei News oder großem Stop halbiere ich.</p><p class="next">Nächste Lektion: <strong>Liquidität</strong> – warum der Preis zu Hochs und Tiefs läuft und was dort passiert.</p></div>
+
+<nav class="lnav" aria-label="Lektionen"><style>.lnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;max-width:760px;margin:22px auto 0}.lnav a{font:inherit;font-weight:600;text-decoration:none;border-radius:6px;padding:10px 16px}.lnav .nx{background:var(--accent);color:var(--paper)}.lnav .pv{color:var(--accent);border:1px solid var(--accent)}.lnav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}</style><a class="pv" href="tjr-03.html">← Lektion 3</a><a class="nx" href="tjr-05.html">Weiter zu Lektion 5: Liquidität →</a></nav>
+</main>
+<script>
+const DATA={};
+const EX={"pos":{"items":[{"info":"20.08.2026 · 5 Min · US 500","q":"Konto 10.000 €, Risiko 0,5 %, Long-Einstieg bei 7.686,9, Stop-Loss bei 7.677,4. Wert pro Punkt: 1 € je Lot. Wie viele Lots?","before":{"bars":[["09:30",7678.5,7689.2,7677.3,7688.7],["09:35",7689.0,7695.5,7685.0,7691.4],["09:40",7691.5,7695.8,7684.8,7691.8],["09:45",7692.0,7693.0,7684.8,7689.5],["09:50",7689.8,7690.8,7682.5,7687.5],["09:55",7687.8,7691.0,7679.8,7683.5],["10:00",7683.3,7688.8,7679.3,7679.3],["10:05",7679.5,7685.8,7677.9,7685.6],["10:10",7685.8,7686.8,7678.6,7678.8],["10:15",7678.9,7680.6,7673.3,7673.7],["10:20",7673.6,7688.3,7672.8,7686.9],["10:25",7686.8,7687.6,7679.1,7681.3],["10:30",7681.6,7687.6,7679.3,7680.1],["10:35",7680.3,7690.8,7678.6,7688.8],["10:40",7689.1,7691.8,7684.8,7690.8],["10:45",7691.1,7694.1,7685.6,7686.6],["10:50",7686.8,7691.8,7685.1,7686.3],["10:55",7686.8,7691.3,7684.1,7690.8],["11:00",7691.2,7700.8,7690.6,7698.1],["11:05",7697.8,7697.8,7682.8,7684.8],["11:10",7684.6,7689.1,7679.6,7686.8],["11:15",7686.6,7689.8,7683.1,7686.8],["11:20",7686.3,7686.8,7679.1,7682.1],["11:25",7681.8,7687.1,7679.1,7686.6]],"cut":11,"shadeHidden":false,"lines":[{"y":7686.9,"col":"accent","label":"Einstieg 7.686,9"},{"y":7677.4,"col":"bear","label":"Stop 7.677,4"}],"marks":[{"i":10,"pos":"above","col":"accent","label":"BOS"}],"every":4,"scaleAll":false},"after":{"bars":[["09:30",7678.5,7689.2,7677.3,7688.7],["09:35",7689.0,7695.5,7685.0,7691.4],["09:40",7691.5,7695.8,7684.8,7691.8],["09:45",7692.0,7693.0,7684.8,7689.5],["09:50",7689.8,7690.8,7682.5,7687.5],["09:55",7687.8,7691.0,7679.8,7683.5],["10:00",7683.3,7688.8,7679.3,7679.3],["10:05",7679.5,7685.8,7677.9,7685.6],["10:10",7685.8,7686.8,7678.6,7678.8],["10:15",7678.9,7680.6,7673.3,7673.7],["10:20",7673.6,7688.3,7672.8,7686.9],["10:25",7686.8,7687.6,7679.1,7681.3],["10:30",7681.6,7687.6,7679.3,7680.1],["10:35",7680.3,7690.8,7678.6,7688.8],["10:40",7689.1,7691.8,7684.8,7690.8],["10:45",7691.1,7694.1,7685.6,7686.6],["10:50",7686.8,7691.8,7685.1,7686.3],["10:55",7686.8,7691.3,7684.1,7690.8],["11:00",7691.2,7700.8,7690.6,7698.1],["11:05",7697.8,7697.8,7682.8,7684.8],["11:10",7684.6,7689.1,7679.6,7686.8],["11:15",7686.6,7689.8,7683.1,7686.8],["11:20",7686.3,7686.8,7679.1,7682.1],["11:25",7681.8,7687.1,7679.1,7686.6]],"lines":[{"y":7686.9,"col":"accent","label":"Einstieg 7.686,9"},{"y":7677.4,"col":"bear","label":"Stop 7.677,4"}],"marks":[{"i":10,"pos":"above","col":"accent","label":"BOS"}],"every":4},"choices":[["0.53","0,53 Lots","ghost"],["5.26","5,26 Lots","ghost"],["52.6","52,60 Lots","ghost"]],"a":"5.26","why":"Risiko = 10.000 € × 0,5 % = 50 €. Stop-Abstand = 7.686,9 − 7.677,4 = 9,5 Punkte. Lots = 50 € ÷ 9,5 Punkte ÷ 1 € = 5,26. Der Chart zeigt jetzt, wie es weiterging. Für die Positionsgröße ist das egal: Sie steht vor dem Ergebnis fest."},{"info":"10.09.2026 · 5 Min · US 500","q":"Konto 100.000 €, Risiko 0,5 %, Long-Einstieg bei 7.593,6, Stop-Loss bei 7.579,6. Wert pro Punkt: 1 € je Lot. Wie viele Lots?","before":{"bars":[["09:30",7595.1,7597.3,7589.8,7591.3],["09:35",7589.6,7598.8,7589.3,7597.9],["09:40",7597.8,7600.8,7594.1,7594.8],["09:45",7594.9,7603.3,7594.6,7600.2],["09:50",7600.1,7600.1,7586.3,7586.8],["09:55",7586.6,7587.1,7580.6,7581.3],["10:00",7581.1,7591.1,7581.1,7586.6],["10:05",7586.3,7587.6,7580.1,7582.1],["10:10",7581.8,7591.1,7581.3,7587.3],["10:15",7587.6,7594.3,7585.1,7593.6],["10:20",7593.3,7613.8,7593.1,7607.6],["10:25",7607.7,7612.2,7599.3,7600.9],["10:30",7600.8,7606.1,7600.3,7602.6],["10:35",7602.7,7609.9,7602.7,7606.9],["10:40",7607.1,7608.1,7600.6,7602.4],["10:45",7602.1,7604.1,7598.3,7601.8],["10:50",7601.6,7605.8,7598.8,7605.6],["10:55",7605.8,7608.9,7602.8,7607.9],["11:00",7608.1,7608.1,7599.3,7602.3],["11:05",7602.6,7608.4,7602.3,7604.1],["11:10",7603.9,7608.6,7603.3,7604.3],["11:15",7604.2,7606.1,7602.6,7604.9],["11:20",7604.6,7607.3,7600.4,7607.1],["11:25",7606.8,7609.6,7605.3,7605.7]],"cut":10,"shadeHidden":false,"lines":[{"y":7593.6,"col":"accent","label":"Einstieg 7.593,6"},{"y":7579.6,"col":"bear","label":"Stop 7.579,6"}],"marks":[{"i":9,"pos":"above","col":"accent","label":"BOS"}],"every":4,"scaleAll":false},"after":{"bars":[["09:30",7595.1,7597.3,7589.8,7591.3],["09:35",7589.6,7598.8,7589.3,7597.9],["09:40",7597.8,7600.8,7594.1,7594.8],["09:45",7594.9,7603.3,7594.6,7600.2],["09:50",7600.1,7600.1,7586.3,7586.8],["09:55",7586.6,7587.1,7580.6,7581.3],["10:00",7581.1,7591.1,7581.1,7586.6],["10:05",7586.3,7587.6,7580.1,7582.1],["10:10",7581.8,7591.1,7581.3,7587.3],["10:15",7587.6,7594.3,7585.1,7593.6],["10:20",7593.3,7613.8,7593.1,7607.6],["10:25",7607.7,7612.2,7599.3,7600.9],["10:30",7600.8,7606.1,7600.3,7602.6],["10:35",7602.7,7609.9,7602.7,7606.9],["10:40",7607.1,7608.1,7600.6,7602.4],["10:45",7602.1,7604.1,7598.3,7601.8],["10:50",7601.6,7605.8,7598.8,7605.6],["10:55",7605.8,7608.9,7602.8,7607.9],["11:00",7608.1,7608.1,7599.3,7602.3],["11:05",7602.6,7608.4,7602.3,7604.1],["11:10",7603.9,7608.6,7603.3,7604.3],["11:15",7604.2,7606.1,7602.6,7604.9],["11:20",7604.6,7607.3,7600.4,7607.1],["11:25",7606.8,7609.6,7605.3,7605.7]],"lines":[{"y":7593.6,"col":"accent","label":"Einstieg 7.593,6"},{"y":7579.6,"col":"bear","label":"Stop 7.579,6"}],"marks":[{"i":9,"pos":"above","col":"accent","label":"BOS"}],"every":4},"choices":[["3.57","3,57 Lots","ghost"],["35.71","35,71 Lots","ghost"],["357.1","357,10 Lots","ghost"]],"a":"35.71","why":"Risiko = 100.000 € × 0,5 % = 500 €. Stop-Abstand = 7.593,6 − 7.579,6 = 14,0 Punkte. Lots = 500 € ÷ 14,0 Punkte ÷ 1 € = 35,71. Der Chart zeigt jetzt, wie es weiterging. Für die Positionsgröße ist das egal: Sie steht vor dem Ergebnis fest."},{"info":"19.10.2026 · 5 Min · US 500","q":"Konto 10.000 €, Risiko 0,5 %, Long-Einstieg bei 7.710,5, Stop-Loss bei 7.697,5. Wert pro Punkt: 1 € je Lot. Wie viele Lots?","before":{"bars":[["09:30",7698.1,7706.0,7695.0,7699.5],["09:35",7699.1,7704.0,7694.3,7698.0],["09:40",7698.8,7701.8,7694.0,7695.3],["09:45",7695.5,7698.3,7691.8,7693.8],["09:50",7694.0,7697.0,7688.8,7691.1],["09:55",7690.5,7695.3,7688.0,7691.5],["10:00",7691.0,7693.3,7684.3,7688.6],["10:05",7688.5,7693.3,7687.8,7692.0],["10:10",7692.3,7709.0,7691.8,7709.0],["10:15",7709.3,7716.3,7708.8,7711.8],["10:20",7711.5,7713.5,7708.0,7713.3],["10:25",7713.0,7713.3,7707.7,7709.5],["10:30",7709.6,7711.5,7695.5,7697.9],["10:35",7698.0,7703.3,7696.5,7699.5],["10:40",7699.8,7704.8,7697.5,7699.5],["10:45",7699.8,7707.5,7699.8,7702.0],["10:50",7701.5,7705.3,7698.0,7705.0],["10:55",7704.8,7707.3,7704.0,7706.8],["11:00",7706.6,7713.0,7706.5,7710.5],["11:05",7710.3,7715.0,7709.5,7711.3],["11:10",7711.8,7715.8,7709.6,7712.1],["11:15",7712.6,7719.1,7711.9,7716.8],["11:20",7716.6,7723.6,7716.1,7722.5],["11:25",7722.4,7728.1,7721.6,7724.3]],"cut":19,"shadeHidden":false,"lines":[{"y":7710.5,"col":"accent","label":"Einstieg 7.710,5"},{"y":7697.5,"col":"bear","label":"Stop 7.697,5"}],"marks":[{"i":18,"pos":"above","col":"accent","label":"BOS"}],"every":4,"scaleAll":false},"after":{"bars":[["09:30",7698.1,7706.0,7695.0,7699.5],["09:35",7699.1,7704.0,7694.3,7698.0],["09:40",7698.8,7701.8,7694.0,7695.3],["09:45",7695.5,7698.3,7691.8,7693.8],["09:50",7694.0,7697.0,7688.8,7691.1],["09:55",7690.5,7695.3,7688.0,7691.5],["10:00",7691.0,7693.3,7684.3,7688.6],["10:05",7688.5,7693.3,7687.8,7692.0],["10:10",7692.3,7709.0,7691.8,7709.0],["10:15",7709.3,7716.3,7708.8,7711.8],["10:20",7711.5,7713.5,7708.0,7713.3],["10:25",7713.0,7713.3,7707.7,7709.5],["10:30",7709.6,7711.5,7695.5,7697.9],["10:35",7698.0,7703.3,7696.5,7699.5],["10:40",7699.8,7704.8,7697.5,7699.5],["10:45",7699.8,7707.5,7699.8,7702.0],["10:50",7701.5,7705.3,7698.0,7705.0],["10:55",7704.8,7707.3,7704.0,7706.8],["11:00",7706.6,7713.0,7706.5,7710.5],["11:05",7710.3,7715.0,7709.5,7711.3],["11:10",7711.8,7715.8,7709.6,7712.1],["11:15",7712.6,7719.1,7711.9,7716.8],["11:20",7716.6,7723.6,7716.1,7722.5],["11:25",7722.4,7728.1,7721.6,7724.3]],"lines":[{"y":7710.5,"col":"accent","label":"Einstieg 7.710,5"},{"y":7697.5,"col":"bear","label":"Stop 7.697,5"}],"marks":[{"i":18,"pos":"above","col":"accent","label":"BOS"}],"every":4},"choices":[["0.39","0,39 Lots","ghost"],["3.85","3,85 Lots","ghost"],["38.5","38,50 Lots","ghost"]],"a":"3.85","why":"Risiko = 10.000 € × 0,5 % = 50 €. Stop-Abstand = 7.710,5 − 7.697,5 = 13,0 Punkte. Lots = 50 € ÷ 13,0 Punkte ÷ 1 € = 3,85. Der Chart zeigt jetzt, wie es weiterging. Für die Positionsgröße ist das egal: Sie steht vor dem Ergebnis fest."},{"info":"15.10.2026 · 5 Min · US 500","q":"Konto 25.000 €, Risiko 1,0 %, Long-Einstieg bei 7.706,2, Stop-Loss bei 7.694,2. Wert pro Punkt: 1 € je Lot. Wie viele Lots?","before":{"bars":[["09:30",7687.2,7691.5,7678.5,7681.3],["09:35",7680.5,7696.7,7677.2,7696.5],["09:40",7696.2,7699.2,7690.2,7693.1],["09:45",7692.7,7697.5,7683.2,7686.1],["09:50",7686.0,7689.5,7670.7,7670.7],["09:55",7671.0,7679.8,7669.2,7679.5],["10:00",7679.2,7695.9,7678.2,7694.2],["10:05",7693.9,7698.7,7692.7,7697.7],["10:10",7698.4,7704.9,7694.5,7697.0],["10:15",7697.2,7701.4,7693.9,7700.2],["10:20",7699.9,7703.7,7694.9,7698.9],["10:25",7698.8,7702.5,7696.9,7698.4],["10:30",7697.9,7706.2,7694.7,7702.7],["10:35",7702.9,7706.9,7695.2,7706.2],["10:40",7705.9,7717.4,7704.9,7714.4],["10:45",7713.9,7715.2,7710.0,7712.9],["10:50",7712.7,7715.5,7708.7,7715.5],["10:55",7715.7,7721.2,7711.7,7720.4],["11:00",7720.7,7726.9,7716.4,7726.7],["11:05",7726.9,7729.2,7721.2,7727.4],["11:10",7727.3,7732.9,7725.9,7730.7],["11:15",7731.0,7736.9,7730.7,7732.9],["11:20",7733.2,7733.4,7726.9,7730.9],["11:25",7730.7,7730.7,7724.7,7727.6]],"cut":14,"shadeHidden":false,"lines":[{"y":7706.2,"col":"accent","label":"Einstieg 7.706,2"},{"y":7694.2,"col":"bear","label":"Stop 7.694,2"}],"marks":[{"i":13,"pos":"above","col":"accent","label":"BOS"}],"every":4,"scaleAll":false},"after":{"bars":[["09:30",7687.2,7691.5,7678.5,7681.3],["09:35",7680.5,7696.7,7677.2,7696.5],["09:40",7696.2,7699.2,7690.2,7693.1],["09:45",7692.7,7697.5,7683.2,7686.1],["09:50",7686.0,7689.5,7670.7,7670.7],["09:55",7671.0,7679.8,7669.2,7679.5],["10:00",7679.2,7695.9,7678.2,7694.2],["10:05",7693.9,7698.7,7692.7,7697.7],["10:10",7698.4,7704.9,7694.5,7697.0],["10:15",7697.2,7701.4,7693.9,7700.2],["10:20",7699.9,7703.7,7694.9,7698.9],["10:25",7698.8,7702.5,7696.9,7698.4],["10:30",7697.9,7706.2,7694.7,7702.7],["10:35",7702.9,7706.9,7695.2,7706.2],["10:40",7705.9,7717.4,7704.9,7714.4],["10:45",7713.9,7715.2,7710.0,7712.9],["10:50",7712.7,7715.5,7708.7,7715.5],["10:55",7715.7,7721.2,7711.7,7720.4],["11:00",7720.7,7726.9,7716.4,7726.7],["11:05",7726.9,7729.2,7721.2,7727.4],["11:10",7727.3,7732.9,7725.9,7730.7],["11:15",7731.0,7736.9,7730.7,7732.9],["11:20",7733.2,7733.4,7726.9,7730.9],["11:25",7730.7,7730.7,7724.7,7727.6]],"lines":[{"y":7706.2,"col":"accent","label":"Einstieg 7.706,2"},{"y":7694.2,"col":"bear","label":"Stop 7.694,2"}],"marks":[{"i":13,"pos":"above","col":"accent","label":"BOS"}],"every":4},"choices":[["2.08","2,08 Lots","ghost"],["20.83","20,83 Lots","ghost"],["208.3","208,30 Lots","ghost"]],"a":"20.83","why":"Risiko = 25.000 € × 1,0 % = 250 €. Stop-Abstand = 7.706,2 − 7.694,2 = 12,0 Punkte. Lots = 250 € ÷ 12,0 Punkte ÷ 1 € = 20,83. Der Chart zeigt jetzt, wie es weiterging. Für die Positionsgröße ist das egal: Sie steht vor dem Ergebnis fest."}],"opt":{"unit":"Trade","label":"5-Minuten-Chart mit Einstieg und Stop-Loss"}}};
+const QUIZ=[{"t":"Was ist Psychologie laut TJR?","o":["Ein Mindset-Training mit Affirmationen","Die Disziplin, Strategie und Risikoplan einzuhalten","Die Fähigkeit, Verluste nicht zu spüren"],"a":1,"e":"Er sagt ausdrücklich: Es gibt keinen Trick. Psychologie heißt, deine beiden Pläne einzuhalten."},{"t":"Konto 10.000 €, 1 % Risiko, Stop 8 Punkte, 1 € pro Punkt je Lot. Wie viele Lots?","o":["1,25","12,50","125"],"a":1,"e":"100 € ÷ 8 Punkte ÷ 1 € = 12,5 Lots."},{"t":"Wann halbiert TJR seine Positionsgröße?","o":["Nach einem Verlusttrade","Bei ungewöhnlich großem Stop oder an News-Tagen","Freitags"],"a":1,"e":"Zwei Ausnahmen: großer Stop und wichtige Wirtschaftsdaten."},{"t":"Welcher Fehler ist „Overrisking“?","o":["Zu viele Trades am Tag","Zu viel Risiko pro Trade","Zu große Hebelwirkung des Brokers"],"a":1,"e":"Overtrading = zu viele Trades, Overleveraging = zu große Position, Overrisking = zu viel Risiko pro Trade."},{"t":"FTMO 2-Step: Tageslimit 5 %. Wie viele Verluste in Folge bei 2 % Risiko, bis das Limit fast erreicht ist?","o":["1","2","5"],"a":1,"e":"2 × 2 % = 4 %. Ein dritter Verlust reißt das Limit. Mit 1 % hättest du vier Fehlversuche Luft."},{"t":"Was zeigt der Simulator vor allem?","o":["Dass gute Strategien keine Verlustserien haben","Dass Verlustserien auch bei positiver Erwartung normal sind","Dass mehr Risiko immer mehr Gewinn bringt"],"a":1,"e":"Schwankung ist Teil des Spiels. Das Risiko pro Trade entscheidet, ob du sie überlebst."},{"t":"Wiederholung Lektion 3: Wann ist eine Kerze ein Swing-Tief?","o":["Wenn sie rot ist","Wenn ihr Low tiefer ist als das Low der Kerze davor und danach","Wenn sie das Tagestief bildet"],"a":1,"e":"Die Regel aus Lektion 3: Nachbarn links und rechts haben ein höheres Low."}];
+/* Trading-Kurs shared runtime */
+const TK=(function(){
+  const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const de=(n,d=1)=>Number(n).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  let tjr=store.get('tk-colors')==='tjr';
+  const upCol=()=>tjr?css('--accent'):css('--bull'),dnCol=()=>tjr?css('--fg'):css('--bear');
+  const COL=k=>({accent:css('--accent'),bull:css('--bull'),bear:css('--bear'),muted:css('--muted'),warn:css('--warn'),fg:css('--fg')}[k]||k);
+  const SOFT=k=>({accent:css('--accent-soft'),bull:css('--bull-soft'),bear:css('--bear-soft'),warn:css('--warn-soft'),muted:css('--grid')}[k]||k);
+  const redraws=[];
+  function onRedraw(f){redraws.push(f)}
+  function redrawAll(){redraws.forEach(f=>{try{f()}catch(e){console.error(e)}})}
+
+  function prep(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);return[c,W,H]}
+
+  /* draw one pane into rect */
+  function pane(c,X,Y,W,H,p){
+    const bars=p.bars,n=bars.length,vis=p.cut!=null?Math.min(p.cut,n):n;
+    let hi=-Infinity,lo=Infinity;
+    const src=p.scaleAll?bars:bars.slice(0,vis);
+    src.forEach(b=>{hi=Math.max(hi,b[2]);lo=Math.min(lo,b[3])});
+    (p.lines||[]).forEach(l=>{if(l.scale!==false){hi=Math.max(hi,l.y);lo=Math.min(lo,l.y)}});
+    (p.zones||[]).forEach(z=>{if(z.scale!==false){hi=Math.max(hi,z.hi);lo=Math.min(lo,z.lo)}});
+    if(p.extra){hi=Math.max(hi,...p.extra);lo=Math.min(lo,...p.extra)}
+    const pd=(hi-lo)*(p.pad??.08)||1;hi+=pd;lo-=pd;if(p.zoom){lo=p.zoom[0];hi=p.zoom[1]}
+    const L=X+8,R=X+W-58,T=Y+(p.title?22:12),B=Y+H-22,cw=(R-L)/n;
+    const y=v=>T+(hi-v)/(hi-lo)*(B-T),x=i=>L+i*cw+cw/2,xl=i=>L+i*cw;
+    c.font='11px '+css('--f-mono');c.lineWidth=1;
+    for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4,yy=Math.round(y(v))+.5;c.strokeStyle=css('--line');c.beginPath();c.moveTo(L,yy);c.lineTo(R,yy);c.stroke();c.fillStyle=css('--muted');c.fillText(v.toFixed(1),R+6,yy+4)}
+    c.save();c.beginPath();c.rect(X,T-14,W,B-T+14);c.clip();
+    (p.bands||[]).forEach(b=>{const a=xl(b.from),e=xl(Math.min(b.to,n));c.fillStyle=SOFT(b.col||'accent');c.fillRect(a,T,e-a,B-T);if(b.label){c.fillStyle=COL(b.col||'accent');c.font='600 10px '+css('--f-mono');c.fillText(b.label,a+3,T+11);c.font='11px '+css('--f-mono')}});
+    if(p.cut!=null&&p.cut<n&&p.shadeHidden!==false){const a=xl(vis);c.fillStyle=css('--accent-soft');c.fillRect(a,T,R-a,B-T);c.fillStyle=css('--muted');c.font='600 20px '+css('--f-display');c.textAlign='center';c.fillText('?',(a+R)/2,(T+B)/2);c.textAlign='left';c.font='11px '+css('--f-mono')}
+    (p.zones||[]).forEach(z=>{if(z.from>=vis&&!z.always)return;const a=xl(z.from),e=xl(Math.min(z.to??n,z.clip===false?n:(p.cut!=null?Math.max(vis,z.from+1):n)));c.fillStyle=SOFT(z.col||'accent');c.globalAlpha=.9;c.fillRect(a,y(z.hi),Math.max(2,e-a),Math.max(1,y(z.lo)-y(z.hi)));c.globalAlpha=1;c.strokeStyle=COL(z.col||'accent');c.strokeRect(a+.5,y(z.hi)+.5,Math.max(2,e-a)-1,Math.max(1,y(z.lo)-y(z.hi))-1);if(z.label){c.fillStyle=COL(z.col||'accent');c.font='600 10px '+css('--f-mono');c.fillText(z.label,a+3,y(z.hi)-4);c.font='11px '+css('--f-mono')}});
+    const every=Math.max(p.every||1,Math.ceil(46/cw),p.every?1:Math.ceil(n/6));c.fillStyle=css('--muted');
+    bars.forEach((b,i)=>{if(i%every===0&&b[0])c.fillText(b[0],xl(i)+1,B+15)});
+    if(p.title){c.fillStyle=css('--fg');c.font='600 11px '+css('--f-mono');c.fillText(p.title,L,Y+13);c.font='11px '+css('--f-mono')}
+    for(let i=0;i<vis;i++){const b=bars[i],xx=x(i),col=b[4]>=b[1]?upCol():dnCol();c.strokeStyle=col;c.fillStyle=col;c.beginPath();c.moveTo(Math.round(xx)+.5,y(b[2]));c.lineTo(Math.round(xx)+.5,y(b[3]));c.stroke();const bw=Math.max(1.5,Math.min(cw*.62,36)),t=y(Math.max(b[1],b[4]));c.fillRect(xx-bw/2,t,bw,Math.max(1,Math.abs(y(b[1])-y(b[4]))))}
+    (p.hl||[]).forEach(i=>{if(i>=vis)return;const b=bars[i];c.strokeStyle=COL('warn');c.lineWidth=2;c.strokeRect(xl(i)+1,y(b[2])-4,cw-2,y(b[3])-y(b[2])+8);c.lineWidth=1});
+    (p.lines||[]).forEach(l=>{if(l.y>hi||l.y<lo)return;const a=xl(l.from||0),e=l.to!=null?xl(Math.min(l.to,n)):R,yy=Math.round(y(l.y))+.5;c.strokeStyle=COL(l.col||'accent');c.lineWidth=l.w||1.5;if(l.dash!==false)c.setLineDash([5,4]);c.beginPath();c.moveTo(a,yy);c.lineTo(e,yy);c.stroke();c.setLineDash([]);c.lineWidth=1;if(l.label){c.font='600 10px '+css('--f-mono');const tw=c.measureText(l.label).width;const lx=l.labelLeft?a+2:Math.max(L,e-tw-4);c.fillStyle=css('--paper');c.fillRect(lx-2,yy-13,tw+4,12);c.fillStyle=COL(l.col||'accent');c.fillText(l.label,lx,yy-3);c.font='11px '+css('--f-mono')}});
+    (p.marks||[]).forEach(m=>{if(m.i>=vis&&!m.always)return;const b=bars[m.i],xx=x(m.i),col=COL(m.col||'accent');c.fillStyle=col;c.strokeStyle=col;c.beginPath();if(m.pos==='below'){const yy=y(b[3])+5;c.moveTo(xx,yy);c.lineTo(xx-6,yy+10);c.lineTo(xx+6,yy+10)}else{const yy=y(b[2])-5;c.moveTo(xx,yy);c.lineTo(xx-6,yy-10);c.lineTo(xx+6,yy-10)}c.closePath();if(m.hollow){c.lineWidth=2;c.stroke();c.lineWidth=1}else c.fill();if(m.label){c.font='600 10px '+css('--f-mono');c.textAlign='center';c.fillText(m.label,xx,m.pos==='below'?y(b[3])+27:y(b[2])-19);c.textAlign='left';c.font='11px '+css('--f-mono')}});
+    (p.vlines||[]).forEach(v=>{const xx=Math.round(xl(v.i))+.5;c.strokeStyle=COL(v.col||'accent');c.setLineDash([3,3]);c.beginPath();c.moveTo(xx,T);c.lineTo(xx,B);c.stroke();c.setLineDash([]);if(v.label){c.fillStyle=COL(v.col||'accent');c.font='600 10px '+css('--f-mono');c.fillText(v.label,xx+3,B-4);c.font='11px '+css('--f-mono')}});
+    c.restore();
+    return {L,R,T,B,cw,y,x,xl,hi,lo,n,inv:yy=>hi-(yy-T)/(B-T)*(hi-lo)};
+  }
+  function draw(cv,spec){
+    const [c,W,H]=prep(cv);const ps=spec.panes||[spec];const h=H/ps.length;const geos=[];
+    ps.forEach((p,k)=>{if(k>0){c.strokeStyle=css('--line');c.beginPath();c.moveTo(0,Math.round(k*h)+.5);c.lineTo(W,Math.round(k*h)+.5);c.stroke()}geos.push(pane(c,0,k*h,W,h,p))});
+    return geos;
+  }
+
+  /* exercise engine */
+  function exercise(root,id,items,opt={}){
+    const P='tk-'+opt.lesson+'-ex-'+id;let res=[];try{res=JSON.parse(store.get(P)||'[]')}catch(e){}
+    let i=Math.min(res.length,items.length-1),picked=null,zoomed=false;
+    function focus(p){let a=null,b=null;const z=(p.zones||[])[0];if(z){a=z.lo;b=z.hi}else{const l=(p.lines||[]).find(l=>l.label&&l.label!=='Dein Tipp');if(l){a=b=l.y}}if(a==null)return null;let hi=-Infinity,lo=Infinity;p.bars.forEach(x=>{hi=Math.max(hi,x[2]);lo=Math.min(lo,x[3])});const h=Math.max(b-a,(hi-lo)*.04,1);return [a-h*2.5,b+h*2.5]}
+    root.innerHTML='<div class="ex-head"><span class="eyebrow" data-r="info"></span><span class="row" style="gap:10px"><button class="btn ghost" type="button" data-r="zoom" style="padding:4px 10px;font-size:.85rem" hidden>🔍 Lupe</button><span class="mono" data-r="score"></span></span></div><div class="chartbox'+(opt.tall?' tall':'')+(opt.dual?' dual':'')+(opt.pick?' click':'')+'"><canvas aria-label="'+(opt.label||'Kerzenchart')+'"></canvas></div><p class="mono" data-r="ohlc" style="color:var(--muted);min-height:1.3em;margin:0">Tippe auf eine Kerze für ihre genauen Werte.</p><p class="qt" data-r="q"></p><div class="row" data-r="btns"></div><p class="result" data-r="res" aria-live="polite"></p><div class="row"><button class="btn ghost" type="button" data-r="next" hidden>Weiter</button><button class="btn ghost" type="button" data-r="redo" hidden>Übung neu starten</button></div>';
+    const $=k=>root.querySelector('[data-r="'+k+'"]'),cv=root.querySelector('canvas');let geos=null;
+    function spec(){const it=items[i],done=res[i]!==undefined;let s=done&&it.after?it.after:it.before;
+      if(opt.pick&&picked!=null&&!done){s=JSON.parse(JSON.stringify(s));const p=(s.panes||[s])[it.pane||0];if(it.mode==='y'){p.lines=(p.lines||[]).concat([{y:picked,col:'accent',label:'Dein Tipp',dash:false}])}else{p.marks=(p.marks||[]).concat([{i:picked,pos:it.markPos||'above',col:'accent',label:'Dein Tipp'}])}}
+      if(opt.pick&&done&&it.mode==='y'&&res[i].v!=null){s=JSON.parse(JSON.stringify(s));const p=(s.panes||[s])[it.pane||0];p.lines=(p.lines||[]).concat([{y:res[i].v,col:res[i].ok?'bull':'bear',label:'Dein Tipp',dash:false,scale:false}])}
+      if(opt.pick&&done&&it.mode!=='y'&&res[i].v!=null){s=JSON.parse(JSON.stringify(s));const p=(s.panes||[s])[it.pane||0];p.marks=(p.marks||[]).concat([{i:res[i].v,pos:it.markPos||'above',col:res[i].ok?'bull':'bear',label:'Dein Tipp',hollow:true}])}
+      if(zoomed){s=JSON.parse(JSON.stringify(s));(s.panes||[s]).forEach(p=>{const f=focus(p);if(f)p.zoom=f})}
+      return s}
+    function render(){
+      const it=items[i],done=res[i]!==undefined;geos=draw(cv,spec());
+      $('info').textContent=(opt.unit||'Aufgabe')+' '+(i+1)+' / '+items.length+(it.info?' · '+it.info:'');
+      const ok=res.filter(r=>r&&r.ok).length;$('score').textContent=ok+' / '+res.length+' richtig';
+      $('q').textContent=it.q;const sp=spec();const hasF=(sp.panes||[sp]).some(p=>focus(p));const zb=$('zoom');zb.hidden=!hasF;zb.textContent=zoomed?'Ganzer Chart':'🔍 Lupe';
+      const bt=$('btns');bt.innerHTML='';
+      if(!opt.pick){(it.choices||opt.choices).forEach(ch=>{const b=document.createElement('button');b.type='button';b.className='btn '+(ch[2]||'ghost');b.textContent=ch[1];b.disabled=done;b.addEventListener('click',()=>{if(res[i]!==undefined)return;res[i]={ok:ch[0]===it.a,v:ch[0]};store.set(P,JSON.stringify(res));render()});bt.appendChild(b)})}
+      else if(!done){const b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Prüfen';b.disabled=picked==null;b.addEventListener('click',check);bt.appendChild(b);const h=document.createElement('span');h.className='mono';h.style.color='var(--muted)';h.textContent=it.mode==='y'?'Tippe auf die Höhe im Chart':'Tippe auf die Kerze im Chart';bt.appendChild(h)}
+      const r=$('res');
+      if(done){const lab=(it.choices||opt.choices||[]).find(c=>c[0]===it.a);r.className='result '+(res[i].ok?'ok':'no');r.innerHTML=(res[i].ok?'Richtig. ':'Nicht ganz. '+(lab&&!opt.pick?'Richtig ist: '+lab[1]+'. ':''))+'<span style="color:var(--muted);font-weight:400">'+it.why+'</span>'}else{r.textContent='';r.className='result'}
+      $('next').hidden=!(done&&i<items.length-1);
+      const all=res.length===items.length&&res.every(x=>x);$('redo').hidden=!all;
+      if(all&&i===items.length-1&&opt.summary){r.innerHTML+='<br><strong>'+opt.summary(ok,items.length)+'</strong>'}
+    }
+    function check(){const it=items[i];if(picked==null)return;let ok;if(it.mode==='y'){ok=Math.abs(picked-it.y)<=it.tol}else{ok=it.ok.includes(picked)}res[i]={ok,v:picked};picked=null;store.set(P,JSON.stringify(res));render()}
+    if(opt.pick){cv.addEventListener('click',ev=>{const it=items[i];if(res[i]!==undefined||!geos)return;const r=cv.getBoundingClientRect(),xx=ev.clientX-r.left,yy=ev.clientY-r.top;const g=geos[it.pane||0];if(it.mode==='y'){if(yy<g.T||yy>g.B)return;picked=g.inv(yy)}else{const k=Math.floor((xx-g.L)/g.cw);if(k<0||k>=g.n)return;const lim=(spec().panes||[spec()])[it.pane||0].cut;if(lim!=null&&k>=lim)return;picked=k}render()})}
+    $('next').addEventListener('click',()=>{i++;picked=null;zoomed=false;$('ohlc').textContent='Tippe auf eine Kerze für ihre genauen Werte.';render()});
+    $('zoom').addEventListener('click',()=>{zoomed=!zoomed;render()});
+    function readout(ev){if(!geos)return;const r=cv.getBoundingClientRect(),xx=ev.clientX-r.left,yy=ev.clientY-r.top;const sp=spec(),ps=sp.panes||[sp];
+      geos.forEach((g,k)=>{if(yy<g.T-14||yy>g.B+4)return;const j=Math.floor((xx-g.L)/g.cw);const p=ps[k];const vis=p.cut!=null?Math.min(p.cut,p.bars.length):p.bars.length;if(j<0||j>=vis)return;const b=p.bars[j];
+        let t=(b[0]?b[0]+' · ':'')+'O '+de(b[1])+' · H '+de(b[2])+' · L '+de(b[3])+' · C '+de(b[4]);const z=(p.zones||[])[0];if(z)t+=' · Zone '+de(z.lo)+'–'+de(z.hi);else{const l=(p.lines||[]).find(l=>l.label&&l.label!=='Dein Tipp');if(l)t+=' · Linie '+de(l.y)}
+        $('ohlc').textContent=(ps.length>1&&p.title?p.title.split(' · ')[0]+': ':'')+t})}
+    cv.addEventListener('click',readout);cv.addEventListener('mousemove',readout);
+    $('redo').addEventListener('click',()=>{res=[];i=0;picked=null;store.set(P,'[]');render()});
+    onRedraw(render);render();
+  }
+
+  function quiz(root,Q,lesson){
+    const P='tk-'+lesson+'-quiz';let ans={};try{ans=JSON.parse(store.get(P)||'{}')}catch(e){}
+    root.innerHTML='<div data-r="qs"></div><div class="score"><span>Ergebnis: <b data-r="sc"></b></span><span data-r="st" class="pill open">offen</span><button class="btn ghost" type="button" data-r="reset">Quiz neu starten</button></div>';
+    const box=root.querySelector('[data-r="qs"]');
+    function render(){box.innerHTML='';
+      Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';const p=document.createElement('p');p.className='qt';p.textContent=(i+1)+'. '+q.t;d.appendChild(p);const os=document.createElement('div');os.className='opts';
+        q.o.forEach((o,j)=>{const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=o;if(ans[i]!==undefined){b.disabled=true;if(j===q.a)b.classList.add('right');else if(j===ans[i])b.classList.add('wrong')}b.addEventListener('click',()=>{ans[i]=j;store.set(P,JSON.stringify(ans));render()});os.appendChild(b)});
+        d.appendChild(os);if(ans[i]!==undefined){const ok=ans[i]===q.a,fb=document.createElement('p');fb.className='fb';fb.innerHTML='<strong class="'+(ok?'ok':'no')+'">'+(ok?'Richtig.':'Nicht ganz.')+'</strong> ';fb.appendChild(document.createTextNode(q.e));d.appendChild(fb)}box.appendChild(d)});
+      const done=Object.keys(ans).length,right=Q.filter((q,i)=>ans[i]===q.a).length;root.querySelector('[data-r="sc"]').textContent=right+' / '+Q.length;const st=root.querySelector('[data-r="st"]');
+      if(done<Q.length){st.className='pill open';st.textContent='offen'}else if(right/Q.length>=.8){st.className='pill pass';st.textContent='bestanden'}else{st.className='pill fail';st.textContent='nicht bestanden – Lektion wiederholen'}}
+    root.querySelector('[data-r="reset"]').addEventListener('click',()=>{ans={};store.set(P,'{}');render()});render();
+  }
+  function explain(root,lesson){
+    const P='tk-'+lesson+'-explain';const ta=root.querySelector('textarea'),btn=root.querySelector('[data-r="copy"]'),c=root.querySelector('[data-r="copied"]');
+    const v=store.get(P);if(v)ta.value=v;ta.addEventListener('input',()=>store.set(P,ta.value));
+    btn.addEventListener('click',()=>{const show=t=>{c.textContent=t;c.hidden=false;setTimeout(()=>c.hidden=true,2000)};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(()=>show('Kopiert'),()=>{ta.select();show('Markiert – jetzt Cmd+C')})}else{ta.select();show('Markiert – jetzt Cmd+C')}});
+  }
+  function colors(){const a=document.getElementById('col-gr'),b=document.getElementById('col-tjr');if(!a)return;const set=v=>{tjr=v;store.set('tk-colors',v?'tjr':'gr');b.setAttribute('aria-pressed',v);a.setAttribute('aria-pressed',!v);redrawAll()};a.addEventListener('click',()=>set(false));b.addEventListener('click',()=>set(true));b.setAttribute('aria-pressed',tjr);a.setAttribute('aria-pressed',!tjr)}
+  function boot(){colors();let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(redrawAll,120)});window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redrawAll);new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(redrawAll)}
+  return {store,css,de,draw,exercise,quiz,explain,boot,onRedraw,redrawAll,prep,COL,SOFT,upCol,dnCol};
+})();
+
+(function(){
+  const L="l4";
+  Object.keys(EX).forEach(id=>{const el=document.getElementById('ex-'+id);if(el)TK.exercise(el,id,EX[id].items,Object.assign({lesson:L},EX[id].opt||{}))});
+  TK.quiz(document.getElementById('quiz'),QUIZ,L);
+  TK.explain(document.getElementById('explain'),L);
+  
+  const $=id=>document.getElementById(id);const de=TK.de;
+  ['p-acct','p-risk','p-stop','p-ppl','p-news'].forEach(k=>{const el=$(k);const v=TK.store.get('tk-l4-'+k);if(v!==null)el.value=v;el.addEventListener('input',()=>{TK.store.set('tk-l4-'+k,el.value);pos()})});
+  function pos(){const a=+$('p-acct').value||0,r=+$('p-risk').value||0,s=+$('p-stop').value||1,p=+$('p-ppl').value||1,n=+$('p-news').value;const eur=a*r/100*n;$('p-eur').textContent=de(eur,0)+' €';$('p-lots').textContent=de(eur/s/p,2);$('p-loss').textContent=r>0?Math.floor(Math.log(0.9)/Math.log(1-r*n/100)):'–'}
+  pos();
+  const sw=$('s-win'),sr=$('s-rr'),sk=$('s-risk');
+  [['s-win',sw],['s-rr',sr],['s-risk',sk]].forEach(([k,el])=>{const v=TK.store.get('tk-l4-'+k);if(v!==null)el.value=v;el.addEventListener('input',()=>{TK.store.set('tk-l4-'+k,el.value);sim()})});
+  let curves=[];
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function sim(){
+    const w=+sw.value/100,rr=+sr.value,rk=+sk.value/100;$('s-win-v').textContent=Math.round(w*100)+' %';$('s-rr-v').textContent=de(rr);$('s-risk-v').textContent=de(rk*100)+' %';
+    const R=rng(42),N=1000,T=100,ends=[],dds=[],streaks=[];let hit=0;curves=[];
+    for(let s=0;s<N;s++){let eq=1,peak=1,dd=0,st=0,mx=0,hitS=false;const c=[1];
+      for(let t=0;t<T;t++){if(R()<w){eq*=1+rk*rr;st=0}else{eq*=1-rk;st++;mx=Math.max(mx,st)}peak=Math.max(peak,eq);dd=Math.max(dd,1-eq/peak);if(eq<=0.9)hitS=true;if(s<20)c.push(eq)}
+      ends.push(eq);dds.push(dd);streaks.push(mx);if(hitS)hit++;if(s<20)curves.push(c)}
+    const med=a=>{const b=a.slice().sort((x,y)=>x-y);return b[Math.floor(b.length/2)]};
+    const m=med(ends);$('s-med').textContent=(m>=1?'+':'−')+de(Math.abs(m-1)*100,1)+' %';$('s-med').style.color=m>=1?'var(--bull)':'var(--bear)';
+    $('s-dd').textContent='−'+de(med(dds)*100,1)+' %';$('s-ftmo').textContent=de(hit/N*100,0)+' %';$('s-streak').textContent=med(streaks)+' Trades';
+    const e=w*rr-(1-w);$('s-note').innerHTML='Erwartung pro Trade: <strong>'+(e>=0?'+':'−')+de(Math.abs(e),2)+' R</strong>. '+(hit/N>0.2?'Bei diesem Risiko reißt jeder '+Math.round(N/Math.max(hit,1))+'. Durchlauf das 10-%-Limit einer FTMO-Challenge. Senke das Risiko und beobachte, wie der Wert fällt.':'Bei diesem Risiko übersteht fast jeder Durchlauf die Pechsträhnen. Erhöhe das Risiko auf 3 % und vergleiche.');
+    drawSim()}
+  function drawSim(){const cv=$('s-canvas'),[c,W,H]=TK.prep(cv);let hi=1,lo=1;curves.forEach(cu=>cu.forEach(v=>{hi=Math.max(hi,v);lo=Math.min(lo,v)}));hi=Math.max(hi,1.05);lo=Math.min(lo,0.85);
+    const L=8,R=W-52,T=12,B=H-22,x=i=>L+i/100*(R-L),y=v=>T+(hi-v)/(hi-lo)*(B-T);c.font='11px '+TK.css('--f-mono');
+    for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4,yy=Math.round(y(v))+.5;c.strokeStyle=TK.css('--line');c.beginPath();c.moveTo(L,yy);c.lineTo(R,yy);c.stroke();c.fillStyle=TK.css('--muted');c.fillText((v>=1?'+':'')+Math.round((v-1)*100)+' %',R+6,yy+4)}
+    [0,25,50,75,100].forEach(t=>{c.fillStyle=TK.css('--muted');c.fillText(t+'',x(t)-4,B+15)});
+    const yl=Math.round(y(0.9))+.5;c.strokeStyle=TK.css('--bear');c.setLineDash([5,4]);c.beginPath();c.moveTo(L,yl);c.lineTo(R,yl);c.stroke();c.setLineDash([]);c.fillStyle=TK.css('--bear');c.font='600 10px '+TK.css('--f-mono');c.fillText('−10 % FTMO-Limit',L+4,yl-4);
+    curves.forEach((cu,k)=>{c.strokeStyle=TK.css('--accent');c.globalAlpha=k===0?1:.35;c.lineWidth=k===0?2:1;c.beginPath();cu.forEach((v,i)=>{i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v))});c.stroke()});c.globalAlpha=1;c.lineWidth=1}
+  TK.onRedraw(drawSim);sim();
+
+  TK.boot();
+})();
+</script>
+
+</body></html>

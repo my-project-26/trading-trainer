@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sessions und Levels</title>
+<meta name="description" content="Session-Zeiten, Level-Begriffe und wie du das US-500-Journal vor und nach 15:30 ausfüllst.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lektion.css">
+</head>
+<body>
+<main class="wrap">
+  <header style="display:grid;gap:12px">
+    <span class="eyebrow">Lektion · US 500 · Journal</span>
+    <h1>Sessions und Levels</h1>
+    <p class="lead">Welche Zeiten du brauchst, wie die Levels heißen und wie du einen Journal-Eintrag Schritt für Schritt ausfüllst.</p>
+  </header>
+
+  <section>
+    <span class="eyebrow">1 · Warum 15:30</span>
+    <h2>Die NY-Eröffnung ist die Stichzeit</h2>
+    <p>15:30 deutscher Zeit ist 9:30 in New York, die Eröffnung des US-Kassamarkts. Ab dann kommt beim US 500 das große Volumen. Das Journal hält fest, welche Liquiditäts-Levels bis zu diesem Moment noch offen sind, denn das sind die Ziele für die NY-Session.</p>
+    <p class="box-note">Achtung Zeitumstellung: Im März und Ende Oktober stellen USA und Europa nicht am selben Tag um. Für ein bis drei Wochen ist die Eröffnung dann um 14:30 deutscher Zeit.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">2 · Zeiten</span>
+    <h2>Die Sessions in NY- und deutscher Zeit</h2>
+    <div class="tablewrap">
+      <table class="ltable">
+        <thead><tr><th>Abschnitt</th><th>New York</th><th>Deutschland</th><th>Journal-Feld</th></tr></thead>
+        <tbody>
+          <tr><td>Vortag Kassasession (RTH)</td><td class="num">9:30–16:00</td><td class="num">15:30–22:00</td><td>Vortageshoch/-tief</td></tr>
+          <tr><td>Pause</td><td class="num">16:00–18:00</td><td class="num">22:00–00:00</td><td>wird nicht gebraucht</td></tr>
+          <tr><td>Asien</td><td class="num">18:00–03:00</td><td class="num">00:00–09:00</td><td>Asien-Hoch/-Tief</td></tr>
+          <tr><td>London</td><td class="num">03:00–09:30</td><td class="num">09:00–15:30</td><td>London-Hoch/-Tief</td></tr>
+          <tr><td>NY heute</td><td class="num">9:30–16:00</td><td class="num">15:30–22:00</td><td>Bereich „Nach 15:30“</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Der Handelstag beginnt um 18:00 New-Yorker Zeit. Asien ab 18:00 gehört also schon zum nächsten Tag. Für den Eintrag zu Tag X schaust du im Chart von <b>X−1, 9:30</b> bis <b>X, 16:00</b>.</p>
+    <p class="box-note">Stell die Chart-Zeitzone auf „New York“ und nicht auf UTC-5. UTC-5 stimmt nur im Winter, im Sommer gilt in New York UTC-4.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">3 · Begriffe</span>
+    <h2>So heißen die Levels bei Profis</h2>
+    <div class="tablewrap">
+      <table class="ltable">
+        <thead><tr><th>Begriff</th><th>Bedeutung</th></tr></thead>
+        <tbody>
+          <tr><td><b>PDH / PDL</b></td><td>Previous Day High/Low, Vortageshoch/-tief. Ohne Zusatz nicht eindeutig: Manche meinen die ganze Tageskerze.</td></tr>
+          <tr><td><b>RTH</b></td><td>Regular Trading Hours, die Kassasession 9:30–16:00 NY. Dein Vortageslevel ist genau gesagt das Prior Day RTH High/Low.</td></tr>
+          <tr><td><b>ETH</b></td><td>Extended Trading Hours, alles außerhalb der Kassasession.</td></tr>
+          <tr><td><b>ONH / ONL</b></td><td>Overnight High/Low von 16:00/18:00 bis 9:30, also Asien und London zusammen.</td></tr>
+          <tr><td><b>Asien-/London-Hoch/-Tief</b></td><td>Die Aufteilung der Nacht in zwei Sessions, üblich im ICT/Smart-Money-Bereich.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Für das Journal heißt das Feld am saubersten <b>„Vortag RTH-Hoch/-Tief“</b>. Wichtig ist, dass du eine Definition festlegst und dabei bleibst.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">4 · Ablesen</span>
+    <h2>Extremwerte, nicht Kerzenkörper</h2>
+    <p>Das Hoch ist die Spitze des höchsten Dochts im Zeitfenster, das Tief das Ende der tiefsten Lunte. Den genauen Kurs liest du mit dem Fadenkreuz oder im Datenfenster ab. Der Indikator SessionLevels zeichnet und beschriftet alle sechs Levels automatisch.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">5 · Offen um 15:30</span>
+    <h2>Welche Levels sind noch offen?</h2>
+    <p>Ein Level ist offen, wenn es seit seiner Entstehung bis 15:30 nicht mehr erreicht wurde. Die Faustregel: Liegt ein späteres Hoch über einem früheren Hoch, ist das frühere nicht mehr offen. Für Tiefs gilt das umgekehrt.</p>
+    <div class="tablewrap">
+      <table class="ltable">
+        <thead><tr><th>Beispiel 04.11.2026</th><th>Kurs</th><th>Geprüft gegen</th><th>Ergebnis</th></tr></thead>
+        <tbody>
+          <tr><td>Vortag Hoch</td><td class="num">7594,00</td><td>Asien ging bis 7604,10</td><td>genommen</td></tr>
+          <tr><td>Vortag Tief</td><td class="num">7546,20</td><td>Asien ging bis 7461,40</td><td>genommen</td></tr>
+          <tr><td>Asien Hoch</td><td class="num">7604,10</td><td>London ging bis 7663,90</td><td>genommen</td></tr>
+          <tr><td>Asien Tief</td><td class="num">7461,40</td><td>London blieb darüber</td><td><b>offen</b></td></tr>
+          <tr><td>London Hoch</td><td class="num">7663,90</td><td>endet um 15:30</td><td><b>offen</b></td></tr>
+          <tr><td>London Tief</td><td class="num">7559,80</td><td>endet um 15:30</td><td><b>offen</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Asien hatte an diesem Tag eine ungewöhnlich große Spanne von rund 143 Punkten, weil in der Nacht die Ergebnisse der US-Zwischenwahlen kamen. Solche Nachrichtentage markierst du in der Notiz und wertest sie später getrennt aus.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">6 · Wann eintragen</span>
+    <h2>Welches Feld wann feststeht</h2>
+    <div class="tablewrap">
+      <table class="ltable">
+        <thead><tr><th>Feld</th><th>Fest ab (NY)</th><th>Fest ab (DE)</th></tr></thead>
+        <tbody>
+          <tr><td>Vortageshoch/-tief</td><td class="num">gestern 16:00</td><td class="num">gestern 22:00</td></tr>
+          <tr><td>Asien-Hoch/-Tief</td><td class="num">03:00</td><td class="num">09:00</td></tr>
+          <tr><td>London-Hoch/-Tief</td><td class="num">09:30</td><td class="num">15:30</td></tr>
+          <tr><td>Häkchen „offen um 15:30“</td><td class="num">09:30</td><td class="num">15:30</td></tr>
+          <tr><td>Bias</td><td class="num">vor 09:30</td><td class="num">vor 15:30</td></tr>
+          <tr><td>Bereich „Nach 15:30“</td><td class="num">nach 16:00</td><td class="num">ab 22:00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Rückwirkende Einträge sind gut zum Üben. Beim Bias wählst du dann „keiner“, außer du hattest ihn vorher wirklich notiert.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">7 · Nach 15:30</span>
+    <h2>Den zweiten Teil ausfüllen</h2>
+    <ol class="steps">
+      <li><div><h3>Zuerst geholt</h3><p>Welches der offenen Levels wurde nach 9:30 NY als Erstes erreicht?</p></div></li>
+      <li><div><h3>Uhrzeit (DE)</h3><p>Uhrzeit der Kerze, die das Level berührt. Chartzeit in New York plus 6 Stunden.</p></div></li>
+      <li><div><h3>Art</h3><p>Sweep, wenn nur Docht oder Lunte über das Level geht und die Kerze wieder diesseits schließt. Durchbruch, wenn die Kerze jenseits schließt. Bewerte das immer auf derselben Zeiteinheit, zum Beispiel M5.</p></div></li>
+      <li><div><h3>Hat der Preis gedreht?</h3><p>Leg dafür eine feste Regel fest, zum Beispiel: gedreht heißt, der Preis erreicht in der Kassasession danach das nächste offene Level auf der Gegenseite.</p></div></li>
+      <li><div><h3>Notiz</h3><p>SMT mit US Tech 100: Hat der Nasdaq sein Level zur gleichen Zeit auch geholt? Dazu Nachrichten und alles, was dir auffällt.</p></div></li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cTrader-Werkzeuge</title>
+<meta name="description" content="Der Indikator SessionLevels und der cBot BiasDatenExport: was sie tun, wie du sie einbaust und einstellst.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lektion.css">
+</head>
+<body>
+<main class="wrap">
+  <header style="display:grid;gap:12px">
+    <span class="eyebrow">Lektion · cTrader · Indikator und cBot</span>
+    <h1>cTrader-Werkzeuge</h1>
+    <p class="lead">Zwei Helfer für das Journal: SessionLevels zeichnet die Sessions und ihre Levels in den Chart, BiasDatenExport speichert Kerzen als CSV für Auswertungen.</p>
+    <div class="dl">
+      <a href="dateien/SessionLevels.cs" download>SessionLevels.cs herunterladen</a>
+      <a href="dateien/BiasDatenExport.cs" download>BiasDatenExport.cs herunterladen</a>
+    </div>
+  </header>
+
+  <section>
+    <span class="eyebrow">1 · Indikator</span>
+    <h2>SessionLevels</h2>
+    <p>Der Indikator färbt den Hintergrund jeder Session ein und zeichnet Hoch und Tief mit Preis. Er rechnet intern immer in New-Yorker Zeit inklusive Sommerzeit, die Zeiten stimmen also unabhängig von der Chart-Zeitzone.</p>
+    <ul class="mistakes">
+      <li>Asien 18:00–03:00, London 03:00–09:30, NY-Kasse 09:30–16:00 als farbige Flächen</li>
+      <li>blaue gepunktete Linie um 9:30 als Stichzeit</li>
+      <li>Hoch und Tief jeder Session mit Beschriftung, die NY-Session vom Vortag als „Vortag Hoch/Tief“</li>
+      <li>Wechsel um 18:00 NY (00:00 DE): Die heutige NY-Session wird zum Vortag, ältere Linien verschwinden</li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="eyebrow">2 · Einbauen</span>
+    <h2>Indikator anlegen</h2>
+    <ol class="steps">
+      <li><div><h3>Neu anlegen</h3><p>Algo → Reiter Indikatoren → Neu. Typ Indikator, C#, „Von Grund auf neu“, Name <code>SessionLevels</code>.</p></div></li>
+      <li><div><h3>Code einfügen</h3><p>Den Vorlage-Code komplett löschen, den Inhalt von SessionLevels.cs einfügen, Build klicken.</p></div></li>
+      <li><div><h3>Auf den Chart legen</h3><p>Im Trade-Bereich auf dem US-500-Chart (M15) über das f-Symbol nach „Session“ suchen und hinzufügen.</p></div></li>
+      <li><div><h3>Nach einer Code-Änderung</h3><p>Neu builden, den Indikator vom Chart entfernen und neu hinzufügen.</p></div></li>
+    </ol>
+    <p class="box-note">Die senkrechten Striche um 0 Uhr sind die Periodentrenner von cTrader. Du schaltest sie über das Augen-Symbol in der Chart-Leiste (Ansichtsoptionen) aus.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">3 · Einstellungen</span>
+    <h2>Die wichtigsten Parameter</h2>
+    <div class="tablewrap">
+      <table class="ltable">
+        <thead><tr><th>Parameter</th><th>Standard</th><th>Wirkung</th></tr></thead>
+        <tbody>
+          <tr><td>Handelstage</td><td class="num">1</td><td>1 zeigt genau das, was du für den heutigen Eintrag brauchst: Vortag plus heutiges Asien, London und NY.</td></tr>
+          <tr><td>Hintergrund färben</td><td class="num">Ja</td><td>Farbige Session-Flächen.</td></tr>
+          <tr><td>Deckkraft Hintergrund</td><td class="num">45</td><td>0 bis 255, höher ist kräftiger.</td></tr>
+          <tr><td>Hoch/Tief-Linien</td><td class="num">Ja</td><td>Auf Nein, wenn du nur die Session-Flächen sehen willst.</td></tr>
+          <tr><td>Preis-Beschriftung</td><td class="num">Ja</td><td>Texte an den Linien.</td></tr>
+          <tr><td>Linien bis NY-Schluss verlängern</td><td class="num">Ja</td><td>Asien und London bis 16:00, NY bis 16:00 am Folgetag.</td></tr>
+          <tr><td>Linie NY-Eröffnung 09:30</td><td class="num">Ja</td><td>Blaue Stichzeit-Linie.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Einstellungen änderst du per Rechtsklick oder Doppelklick auf den Indikatornamen oben links im Chart, nicht über das Augen-Symbol. Das Auge blendet nur den ganzen Indikator aus. Zwei Varianten, etwa „nur Zeitzonen“ und „mit Levels“, speicherst du als Parameter-Vorlagen.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">4 · cBot</span>
+    <h2>BiasDatenExport</h2>
+    <p>Der cBot schreibt Kerzen als CSV-Datei: Standard US 500, M15, die letzten 6 Monate, Zeit in New-Yorker Zeit, dazu Open, High, Low, Close und Volumen. Er läuft einmal, speichert die Datei und stoppt sich selbst. Die Handy-App kann das nicht, du brauchst cTrader am Mac.</p>
+    <ol class="steps">
+      <li><div><h3>Anlegen</h3><p>Algo → cBots → Neu, Name <code>BiasDatenExport</code>, Code einfügen, Build.</p></div></li>
+      <li><div><h3>Starten</h3><p>Instanz hinzufügen und Start klicken. cTrader fragt nach Vollzugriff, der ist nötig, damit die Datei geschrieben werden darf.</p></div></li>
+      <li><div><h3>Datei finden</h3><p>Der Pfad steht im Protokoll, standardmäßig <code>Dokumente/BiasTrainer/US500_Minute15_….csv</code>.</p></div></li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>

@@ -55,7 +55,7 @@
         navH += `<a href="#t-${t.id}" data-id="${t.id}">${t.t}</a>`;
         selH += `<option value="${t.id}">${t.t}</option>`;
         const ln = t.l.map(n => `L${n}`).join(', ');
-        const lessonLinks = t.l.map(n => `<a class="btn ghost" href="https://claude.ai/artifact/${LESSONS[n][1]}" target="_blank" rel="noopener">Lektion ${n} öffnen ↗</a>`).join('');
+        const lessonLinks = t.l.map(n => `<a class="btn ghost" href="#lektionen" data-lesson="tjr-${String(n).padStart(2, '0')}">Lektion ${n} öffnen</a>`).join('');
         const practice = t.l.length ? `<button class="btn" type="button" data-practice="${t.l[0]}">Fragen zu Lektion ${t.l[0]} üben</button>` : '';
         html += `<article class="topic" id="t-${t.id}" data-search="${TT.esc((t.t + ' ' + t.sum + ' ' + t.body.replace(/<[^>]+>/g, ' ')).toLowerCase())}">
 <header><span class="tag">${b}${ln ? ' · ' + ln : ''}</span><h2>${t.t}</h2></header>
@@ -380,20 +380,84 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
     calc();
   }
 
+
+  /* ---------- Lektionen ---------- */
+  const pad2 = n => String(n).padStart(2, '0');
+  const LEKTIONEN = [
+    ...Object.keys(LESSONS).map(n => ({ id: 'tjr-' + pad2(n), t: `Lektion ${n} · ${LESSONS[n][0]}`, g: 'TJR-Kurs', d: `TJR-Kurs, Lektion ${n} von 16: ${LESSONS[n][0]}. Mit Übungen und Quiz.` })),
+    { id: 'sessions-und-levels', t: 'Sessions und Levels', g: 'US-500-Journal', d: 'Session-Zeiten in NY- und deutscher Zeit, Level-Begriffe, offene Levels prüfen und das Journal vor und nach 15:30 ausfüllen.' },
+    { id: 'bias-vor-1530', t: 'Bias vor 15:30', g: 'US-500-Journal', d: 'Sweep oder Durchbruch erkennen, die Regel in drei Schritten und zwanzig geführte Übungscharts.' },
+    { id: 'ctrader-werkzeuge', t: 'cTrader-Werkzeuge', g: 'Werkzeuge', d: 'Indikator SessionLevels und cBot BiasDatenExport: einbauen, einstellen, Dateien herunterladen.' }
+  ];
+  function setLesson(id) {
+    if (!LEKTIONEN.some(l => l.id === id)) return;
+    S.lesson = id; save();
+    $('#lessonsel').value = id;
+  }
+  function buildLessons() {
+    const sel = $('#lessonsel');
+    const groups = [...new Set(LEKTIONEN.map(l => l.g))];
+    sel.innerHTML = groups.map(g => `<optgroup label="${g}">` + LEKTIONEN.filter(l => l.g === g).map(l => `<option value="${l.id}">${l.t}</option>`).join('') + '</optgroup>').join('');
+    sel.value = LEKTIONEN.some(l => l.id === S.lesson) ? S.lesson : LEKTIONEN[0].id;
+    sel.addEventListener('change', () => { setLesson(sel.value); showLesson(true); });
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[data-lesson]');
+      if (!a) return;
+      setLesson(a.dataset.lesson);
+      if (location.hash === '#lektionen') { e.preventDefault(); showLesson(true); }
+    });
+    const fr = $('#lessonframe');
+    let ro = null;
+    const fit = () => {
+      try {
+        const d = fr.contentDocument;
+        if (d && d.documentElement) fr.style.height = Math.max(400, d.documentElement.scrollHeight) + 'px';
+      } catch (e) { /* feste Höhe behalten */ }
+    };
+    fr.addEventListener('load', () => {
+      fit();
+      try {
+        const d = fr.contentDocument;
+        const file = fr.contentWindow.location.pathname.split('/').pop().replace('.html', '');
+        if (file && file !== sel.value && LEKTIONEN.some(l => l.id === file)) {
+          setLesson(file);
+          const l = LEKTIONEN.find(x => x.id === file);
+          $('#lessondesc').textContent = l.d;
+          $('#lessonopen').href = 'lektionen/' + file + '.html';
+          fr.dataset.cur = file;
+          $('#v-lektionen').scrollIntoView();
+        }
+        if (ro) ro.disconnect();
+        if (window.ResizeObserver && d && d.body) { ro = new ResizeObserver(fit); ro.observe(d.body); }
+      } catch (e) { /* ohne Anpassung weiter */ }
+    });
+  }
+  function showLesson(scroll) {
+    const sel = $('#lessonsel'), fr = $('#lessonframe');
+    const l = LEKTIONEN.find(x => x.id === sel.value) || LEKTIONEN[0];
+    const src = 'lektionen/' + l.id + '.html';
+    if (fr.dataset.cur !== l.id) { fr.dataset.cur = l.id; fr.setAttribute('src', src); }
+    $('#lessonopen').href = src;
+    $('#lessondesc').textContent = l.d;
+    if (scroll) $('#v-lektionen').scrollIntoView({ behavior: 'smooth' });
+  }
+
   /* ---------- Navigation ---------- */
   const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
   function route() {
     const h = location.hash.replace('#', '');
-    const view = h === 'trainer' ? 'trainer' : h === 'werkzeuge' ? 'werkzeuge' : 'lernen';
+    const view = h === 'trainer' ? 'trainer' : h === 'werkzeuge' ? 'werkzeuge' : h === 'lektionen' ? 'lektionen' : 'lernen';
     $$('.view').forEach(v => { v.hidden = v.id !== 'v-' + view; });
     $$('.tabs a').forEach(a => a.setAttribute('aria-current', a.dataset.v === view ? 'page' : 'false'));
     if (view === 'trainer') renderTrainer(true);
+    if (view === 'lektionen') showLesson();
     if (h.startsWith('t-')) { const el = document.getElementById(h); if (el) el.scrollIntoView(); }
     else window.scrollTo(0, 0);
   }
   buildLearn();
   buildTrainer();
   buildTools();
+  buildLessons();
   window.addEventListener('hashchange', route);
   route();
 })();

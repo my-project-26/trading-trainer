@@ -1,0 +1,318 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Trading-Kurs Lektion 6</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: single reading column like a trading playbook page; chart-grid paper ground, candle colours only for up/down and right/wrong */
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --fg:#17202b; --muted:#5a6675; --line:#d7dde4;
+  --grid:rgba(23,32,43,.045); --accent:#1f5fa8; --accent-soft:#e3ecf7;
+  --bull:#11845b; --bull-soft:#e1f3eb; --bear:#c2412d; --bear-soft:#fbe7e3; --warn:#9a6a00; --warn-soft:#fbf1d6;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141a; --paper:#161d25; --fg:#e4e9ef; --muted:#97a3b1; --line:#2a3440;
+  --grid:rgba(228,233,239,.04); --accent:#6ea6e8; --accent-soft:#1b2b3f;
+  --bull:#3fc490; --bull-soft:#13302a; --bear:#ef7a66; --bear-soft:#3a1d19; --warn:#e2b54a; --warn-soft:#352b12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141a; --paper:#161d25; --fg:#e4e9ef; --muted:#97a3b1; --line:#2a3440;
+  --grid:rgba(228,233,239,.04); --accent:#6ea6e8; --accent-soft:#1b2b3f;
+  --bull:#3fc490; --bull-soft:#13302a; --bear:#ef7a66; --bear-soft:#3a1d19; --warn:#e2b54a; --warn-soft:#352b12; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16.5px;line-height:1.6;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,2.9rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.45rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-size:.82rem}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.prose{max-width:65ch;display:flex;flex-direction:column;gap:12px}
+header{display:flex;flex-direction:column;gap:14px;padding-bottom:6px}
+.ticker{display:flex;flex-wrap:wrap;gap:8px}
+.ticker span{font-family:var(--f-mono);font-size:.75rem;border:1px solid var(--line);background:var(--paper);padding:3px 9px;border-radius:4px;color:var(--muted)}
+.ticker span b{color:var(--fg);font-weight:600}
+.lead{font-size:1.12rem;color:var(--muted);max-width:60ch}
+section.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec-head{display:flex;align-items:baseline;gap:12px}
+.sec-head .n{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);font-weight:600}
+.callout{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 14px;border-radius:0 8px 8px 0}
+.callout.blue{border-color:var(--accent);background:var(--accent-soft)}
+
+/* guess game */
+.game-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.chartbox{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;border:1px solid var(--line);border-radius:8px;background:var(--bg);overflow:hidden}
+.chartbox canvas{position:absolute;inset:0;width:100%;height:100%}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:inherit;font-weight:600;color:var(--paper);background:var(--accent);border:0;border-radius:6px;padding:9px 14px;cursor:pointer}
+.btn.up{background:var(--bull)} .btn.down{background:var(--bear)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.result{font-weight:600}
+.result.ok{color:var(--bull)} .result.no{color:var(--bear)}
+.tally{display:flex;gap:6px;flex-wrap:wrap}
+.tally i{width:14px;height:14px;border-radius:3px;border:1px solid var(--line);display:block}
+.tally i.ok{background:var(--bull);border-color:var(--bull)} .tally i.no{background:var(--bear);border-color:var(--bear)}
+
+/* expectancy */
+.calc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+label{font-size:.85rem;font-weight:600;display:flex;flex-direction:column;gap:6px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.val{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--accent)}
+.out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.out div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.out b{font-family:var(--f-mono);font-size:1.35rem;font-variant-numeric:tabular-nums}
+.out span{font-size:.8rem;color:var(--muted)}
+.pos{color:var(--bull)} .neg{color:var(--bear)}
+.bar{position:relative;height:14px;border-radius:7px;background:var(--bear-soft);overflow:hidden}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--accent)}
+.bar .be{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--fg)}
+.bar-legend{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+
+/* tables */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.t{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.terms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.terms div{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.terms b{font-family:var(--f-display)}
+
+/* quiz */
+.q{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.q:first-of-type{border-top:0;padding-top:0}
+.q p.qt{font-weight:600}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{font:inherit;text-align:left;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt[disabled]{cursor:default}
+.opt.right{background:var(--bull-soft);border-color:var(--bull)}
+.opt.wrong{background:var(--bear-soft);border-color:var(--bear)}
+.fb{font-size:.92rem;color:var(--muted)}
+.fb strong.ok{color:var(--bull)} .fb strong.no{color:var(--bear)}
+.score{display:flex;flex-wrap:wrap;align-items:center;gap:12px;border-radius:8px;padding:12px 14px;background:var(--accent-soft)}
+.score b{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.pill{font-family:var(--f-mono);font-size:.75rem;padding:3px 9px;border-radius:999px;border:1px solid currentColor}
+.pill.pass{color:var(--bull)} .pill.open{color:var(--muted)} .pill.fail{color:var(--bear)}
+textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-height:96px;resize:vertical;line-height:1.5}
+.rule{border:2px solid var(--fg);border-radius:10px;padding:18px clamp(16px,4vw,24px);display:flex;flex-direction:column;gap:8px;background:var(--paper)}
+.rule p.r{font-family:var(--f-display);font-size:1.2rem;font-weight:700;line-height:1.3}
+.next{color:var(--muted);font-size:.92rem}
+@media (max-width:560px){.calc,.out,.terms{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:inherit;font-size:.9rem;font-weight:600;background:var(--paper);color:var(--muted);border:0;padding:7px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.chartbox.tall{aspect-ratio:4/3}
+.chartbox.click canvas{cursor:crosshair}
+.anat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:center}
+.anat .chartbox{aspect-ratio:1/1}
+.legend{display:flex;flex-direction:column;gap:8px}
+.legend div{display:grid;grid-template-columns:70px 1fr;gap:8px}
+.legend b{font-family:var(--f-mono);font-size:.85rem}
+.kv{display:flex;flex-wrap:wrap;gap:8px}
+.kv span{font-family:var(--f-mono);font-size:.8rem;font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:5px;padding:3px 8px}
+.ex-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.drill{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:16px;align-items:center}
+.drill .chartbox{aspect-ratio:3/4}
+.abcd{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.abcd .btn{padding:10px 0}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+@media (max-width:560px){.anat,.drill{grid-template-columns:1fr}.drill .chartbox{max-width:220px;margin:0 auto;width:100%}}
+
+.ex{display:flex;flex-direction:column;gap:12px}
+.ex .qt{font-weight:600}
+.sim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.chartbox.wide{aspect-ratio:2/1}
+.chartbox.dual{aspect-ratio:7/6}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.statgrid div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.statgrid b{font-family:var(--f-mono);font-size:1.3rem;font-variant-numeric:tabular-nums;color:var(--accent)}
+.statgrid span{font-size:.8rem;color:var(--muted)}
+select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+input[type=number]{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.steps4 div{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.steps4 .k{font-family:var(--f-mono);font-size:.75rem;color:var(--accent);font-weight:600}
+@media (max-width:560px){.sim,.steps4{grid-template-columns:1fr 1fr}}
+@media (max-width:380px){.sim,.steps4{grid-template-columns:1fr}}
+p.prose{display:block}
+</style>
+<main>
+<header>
+  <div class="ticker"><span>Block <b>B · Liquidität</b></span><span>Lektion <b>06</b> / 16</span><span>Lesezeit <b>~25 Min.</b></span><span>Quelle: TJR · Advanced Liquidity Concepts</span></div>
+  <h1>Liquidität für Fortgeschrittene</h1>
+  <p class="lead">Manche Hochs und Tiefs ziehen den Preis stärker an als andere. Du lernst die wichtigsten Ziele kennen: Session-Levels, Vortageshoch und -tief, gleiche Hochs und gestapelte Tiefs. Und du liest an echten Tagen ab, welches Level New York zuerst holt.</p>
+  <div class="row"><span class="eyebrow">Kerzenfarben</span><div class="seg" role="group" aria-label="Kerzenfarben"><button type="button" id="col-gr" aria-pressed="true">Grün / Rot</button><button type="button" id="col-tjr" aria-pressed="false">Neutral wie TJR</button></div></div>
+</header>
+<section class="card"><div class="sec-head"><span class="n">1</span><h2>Nicht jedes Hoch ist gleich</h2></div><div class="prose"><p>In Lektion 5 hast du gelernt: Über Hochs liegen Kauforders, unter Tiefs Verkaufsorders. Jetzt geht es darum, welche Hochs und Tiefs <strong>besonders viele</strong> Orders haben. Das sind die Ziele, die der Preis am wahrscheinlichsten anläuft. TJR nennt sie <em>Draws on Liquidity</em>.</p></div></section>
+<section class="card"><div class="sec-head"><span class="n">2</span><h2>Session-Hochs und -Tiefs</h2></div><div class="tbl"><table><thead><tr><th>Session</th><th>New York</th><th>Deutschland (Winter)</th></tr></thead><tbody>
+<tr><td>Asien</td><td class="t">18:00–03:00</td><td class="t">00:00–09:00</td></tr>
+<tr><td>London</td><td class="t">03:00–08:30</td><td class="t">09:00–14:30</td></tr>
+<tr><td>New York</td><td class="t">08:30–17:00</td><td class="t">14:30–23:00</td></tr></tbody></table></div>
+<div class="prose"><p>Jede Session bringt neues Geld in den Markt. Die Idee: <strong>Die nächste Session holt sich zuerst die Liquidität der vorherigen</strong>, bevor sie ihre eigene Richtung läuft.</p>
+<ol class="steps"><li>Asien setzt ein Hoch und ein Tief.</li><li>London läuft unter das Asien-Tief (oder über das Hoch), holt die Orders und dreht.</li><li>New York läuft über das London-Hoch (oder unter das Tief), holt die Orders und läuft zur Gegenseite.</li></ol>
+<p>TJR betont: Das passiert nicht jeden Tag. Ein geholtes Level ist eine Möglichkeit zur Umkehr, kein Signal.</p></div></section>
+<section class="card"><div class="sec-head"><span class="n">3</span><h2>Vortageshoch und -tief</h2></div><div class="prose"><p>Das höchste und tiefste Level des gesamten Vortags (alle drei Sessions). Es ist ein starkes Ziel, weil es auf dem Tageschart jeder sieht. Vortageshoch heißt trotzdem nicht automatisch Verkaufen.</p></div></section>
+<section class="card"><div class="sec-head"><span class="n">4</span><h2>Übung: Welches Level zuerst?</h2></div><p class="prose">Echte Tage aus deinem US 500, 15-Minuten-Chart von 18:00 bis 12:00 New York. Eingezeichnet sind nur die Levels, die um 09:30 noch nicht geholt waren. Lies ab, welches New York zuerst erreicht hat.</p><div class="ex" id="ex-a"></div>
+<h3>Was deine Daten sagen</h3>
+<div class="statgrid">
+<div><b>84 %</b><span>Tage, an denen London ein Asien-Level geholt hat (109 von 130)</span></div>
+<div><b>70 %</b><span>Tage, an denen New York bis 12:00 mindestens ein offenes Level erreicht hat</span></div>
+</div>
+<p class="callout blue">Die Session-Levels sind echte Magnete. In etwa 7 von 10 Tagen holt New York bis Mittag mindestens eins davon. Welches zuerst und ob der Preis danach dreht, ist die eigentliche Arbeit.</p></section>
+<section class="card"><div class="sec-head"><span class="n">5</span><h2>Weitere starke Ziele</h2></div><div class="terms">
+<div><b>Low-Resistance-Liquidität</b><span>Gestapelte Tiefs in einem Aufwärtstrend (oder Hochs in einem Abwärtstrend). Wie Kekse in einer Dose: Wenn der Trend dreht, holt der Preis einen nach dem anderen. Gut als Kursziel.</span></div>
+<div><b>Gleiche Hochs / Tiefs (EQH / EQL)</b><span>Zwei Hochs oder Tiefs auf fast demselben Preis. Doppelt so viele Stops und Ausbruchsorders an einer Stelle. TJR: „Zwei Kekse sind besser als einer.“</span></div>
+<div><b>News-Hochs / -Tiefs</b><span>Hoch und Tief der Kerze, in der wichtige Daten kamen (CPI, PPI, Arbeitsmarkt). Termine auf forexfactory.com, rote Markierung = wichtig. 08:30 NY = 14:30 in Deutschland.</span></div>
+<div><b>Extern vs. intern</b><span>Extern = Hochs und Tiefs (alles in dieser Lektion). Intern = Ungleichgewichte im Preis, die Fair Value Gaps aus Lektion 8.</span></div>
+</div>
+<p class="callout"><strong>Kernaussage:</strong> Der Preis läuft entweder zu externer Liquidität (Hochs, Tiefs) oder füllt interne Ungleichgewichte. Jedes Liquiditätsziel kann zwei Rollen haben: als <strong>Einstiegszone</strong> nach einem Sweep oder als <strong>Kursziel</strong>.</p></section>
+<section class="card"><div class="sec-head"><span class="n">6</span><h2>Hausaufgabe im Chart</h2></div><p class="prose">Markiere in cTrader für die nächsten 3 Handelstage morgens vor 15:30 (deutsche Zeit) Asien-Hoch und -Tief, London-Hoch und -Tief sowie Vortageshoch und -tief. Notiere danach: Welches Level hat New York zuerst geholt? Ist der Preis danach gedreht? Schick mir einen Screenshot pro Tag.</p></section>
+<section class="card"><div class="sec-head"><span class="n">7</span><h2>Quiz</h2></div><p class="prose">Bestanden ab 80 %. Enthält Wiederholungsfragen aus früheren Lektionen.</p><div id="quiz"></div></section>
+<section class="card"><div class="sec-head"><span class="n">8</span><h2>Zurückerklären</h2></div><div id="explain" class="ex"><p class="prose">Erkläre in 3–4 eigenen Sätzen: Welche Levels markierst du vor der New-York-Eröffnung, und warum zieht ein Session-Hoch den Preis an?</p><label for="explain-ta" class="eyebrow">Deine Erklärung<textarea id="explain-ta" placeholder="In eigenen Worten …"></textarea></label><div class="row"><button class="btn" type="button" data-r="copy">Text kopieren</button><span data-r="copied" class="mono" hidden>Kopiert</span></div></div></section>
+<div class="rule"><span class="eyebrow">Regel aus Lektion 6</span><p class="r">Vor 09:30 New York markiere ich Asien-, London- und Vortageslevels, die noch offen sind. Sie sind Einstiegszone nach einem Sweep oder Kursziel – nie allein ein Signal.</p><p class="next">Nächste Lektion: <strong>Break of Structure</strong> – wie du bestätigst, dass nach einem Sweep wirklich gedreht wurde.</p></div>
+
+<nav class="lnav" aria-label="Lektionen"><style>.lnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;max-width:760px;margin:22px auto 0}.lnav a{font:inherit;font-weight:600;text-decoration:none;border-radius:6px;padding:10px 16px}.lnav .nx{background:var(--accent);color:var(--paper)}.lnav .pv{color:var(--accent);border:1px solid var(--accent)}.lnav a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}</style><a class="pv" href="tjr-05.html">← Lektion 5</a><a class="nx" href="tjr-07.html">Weiter zu Lektion 7: Break of Structure →</a></nav>
+</main>
+<script>
+const DATA={};
+const EX={"a":{"items":[{"info":"Fr 31.07.2026 · 15 Min · US 500","q":"Die Linien sind die Levels, die um 09:30 New York noch offen waren. Welches hat New York zuerst erreicht?","before":{"bands":[{"from":0,"to":36,"col":"muted","label":"Asien"},{"from":36,"to":58,"col":"warn","label":"London"},{"from":58,"to":72,"col":"accent","label":"New York"}],"bars":[["18:00",7439.7,7451.1,7439.2,7447.4],["18:15",7447.3,7451.5,7444.1,7445.9],["18:30",7446.0,7453.4,7443.6,7453.4],["18:45",7453.6,7456.4,7452.9,7455.7],["19:00",7455.9,7460.4,7453.4,7453.9],["19:15",7454.2,7454.9,7451.4,7453.7],["19:30",7453.6,7458.9,7452.8,7458.7],["19:45",7458.4,7462.6,7456.1,7458.9],["20:00",7459.1,7467.5,7455.6,7466.6],["20:15",7466.7,7468.9,7464.0,7465.3],["20:30",7465.1,7468.4,7464.6,7467.6],["20:45",7467.9,7467.9,7462.3,7466.2],["21:00",7466.4,7472.9,7466.4,7470.9],["21:15",7471.2,7475.4,7470.8,7473.3],["21:30",7473.1,7473.6,7467.4,7468.2],["21:45",7468.1,7468.9,7465.4,7468.9],["22:00",7468.8,7471.4,7465.4,7465.9],["22:15",7465.8,7465.9,7462.5,7463.6],["22:30",7463.4,7464.6,7459.7,7463.4],["22:45",7463.7,7464.7,7460.4,7464.2],["23:00",7463.9,7464.6,7459.6,7462.1],["23:15",7462.3,7468.4,7462.1,7467.4],["23:30",7467.7,7469.9,7466.9,7468.4],["23:45",7468.3,7468.9,7464.1,7467.9],["00:00",7467.8,7469.4,7463.4,7468.9],["00:15",7469.1,7474.2,7467.7,7473.9],["00:30",7474.2,7478.7,7473.4,7478.4],["00:45",7478.7,7480.4,7477.4,7479.9],["01:00",7479.7,7480.7,7478.2,7479.2],["01:15",7479.7,7481.4,7478.4,7480.3],["01:30",7480.2,7481.7,7476.7,7477.6],["01:45",7477.4,7480.7,7476.9,7479.4],["02:00",7479.3,7481.9,7478.4,7481.4],["02:15",7481.7,7482.2,7477.6,7479.2],["02:30",7478.7,7479.2,7464.4,7467.4],["02:45",7467.1,7469.4,7463.1,7467.4],["03:00",7467.3,7478.4,7464.1,7476.9],["03:15",7476.8,7479.6,7472.1,7476.1],["03:30",7476.3,7478.4,7473.7,7477.6],["03:45",7477.9,7479.1,7473.9,7477.6],["04:00",7477.9,7481.4,7473.8,7481.4],["04:15",7481.6,7483.9,7479.1,7482.5],["04:30",7482.4,7483.1,7478.1,7479.4],["04:45",7479.5,7484.9,7478.9,7483.9],["05:00",7484.1,7488.6,7482.1,7487.1],["05:15",7486.9,7487.9,7482.6,7482.9],["05:30",7482.7,7483.4,7474.9,7477.4],["05:45",7477.1,7479.1,7475.0,7475.1],["06:00",7474.9,7479.4,7473.4,7478.4],["06:15",7478.3,7483.2,7477.6,7480.7],["06:30",7480.1,7481.7,7475.4,7479.2],["06:45",7479.4,7480.4,7475.9,7477.8],["07:00",7477.6,7482.3,7477.0,7477.9],["07:15",7478.0,7478.1,7470.5,7471.0],["07:30",7470.9,7471.1,7465.4,7467.2],["07:45",7467.1,7471.4,7466.7,7470.4],["08:00",7470.7,7470.7,7461.1,7461.6],["08:15",7461.1,7463.6,7456.8,7462.4],["08:30",7462.3,7462.8,7450.7,7454.1],["08:45",7454.3,7457.9,7451.4,7454.1],["09:00",7455.1,7462.1,7452.3,7461.1],["09:15",7461.6,7470.1,7461.4,7469.6],["09:30",7471.1,7486.1,7451.3,7453.6],["09:45",7453.8,7458.6,7437.7,7441.5],["10:00",7440.7,7446.0,7401.6,7406.7],["10:15",7406.6,7427.6,7398.6,7427.0],["10:30",7426.8,7439.1,7423.6,7438.6],["10:45",7438.8,7451.9,7437.3,7447.8],["11:00",7448.1,7450.6,7433.8,7444.1],["11:15",7443.8,7453.3,7423.6,7425.6],["11:30",7425.8,7446.1,7420.6,7440.8],["11:45",7441.6,7455.9,7433.9,7453.4]],"lines":[{"y":7439.2,"col":"bull","label":"Asien-Tief"},{"y":7488.6,"col":"bear","label":"London-Hoch"},{"y":7307.5,"col":"bull","label":"Vortagestief"}],"every":8,"vlines":[{"i":62,"col":"accent","label":"09:30"}]},"choices":[["AL","Asien-Tief","ghost"],["LH","London-Hoch","ghost"],["PDL","Vortagestief","ghost"],["none","Keines bis 12:00","ghost"]],"a":"AL","why":"Um 09:50 lief der Preis zuerst unter das Asien-Tief (7.439,2). Lies den Chart ab 09:30 von links nach rechts: Welche Linie wird zuerst berührt?"},{"info":"Mi 13.05.2026 · 15 Min · US 500","q":"Die Linien sind die Levels, die um 09:30 New York noch offen waren. Welches hat New York zuerst erreicht?","before":{"bands":[{"from":0,"to":36,"col":"muted","label":"Asien"},{"from":36,"to":58,"col":"warn","label":"London"},{"from":58,"to":72,"col":"accent","label":"New York"}],"bars":[["18:00",7397.0,7401.0,7396.7,7399.1],["18:15",7398.8,7403.6,7398.8,7401.8],["18:30",7401.7,7402.7,7400.6,7400.8],["18:45",7401.0,7402.1,7397.8,7398.0],["19:00",7398.1,7399.3,7395.8,7396.5],["19:15",7396.7,7397.8,7394.8,7395.3],["19:30",7395.6,7395.6,7388.5,7389.2],["19:45",7389.1,7392.5,7388.1,7388.1],["20:00",7387.8,7392.5,7386.2,7388.8],["20:15",7388.5,7399.2,7388.5,7393.5],["20:30",7393.8,7398.0,7391.0,7396.0],["20:45",7395.8,7397.3,7392.0,7396.7],["21:00",7396.6,7401.8,7396.1,7401.1],["21:15",7400.8,7403.1,7398.0,7402.9],["21:30",7403.0,7406.1,7401.0,7405.6],["21:45",7405.8,7412.5,7404.5,7405.2],["22:00",7405.0,7407.0,7401.5,7403.8],["22:15",7404.1,7407.6,7403.3,7407.3],["22:30",7407.2,7408.1,7405.3,7405.8],["22:45",7406.1,7406.6,7404.3,7405.3],["23:00",7405.1,7405.8,7401.8,7402.1],["23:15",7402.2,7407.1,7402.1,7407.1],["23:30",7407.3,7412.1,7407.1,7411.6],["23:45",7411.3,7411.6,7409.3,7410.3],["00:00",7410.2,7411.7,7409.6,7411.1],["00:15",7411.3,7412.6,7410.6,7411.8],["00:30",7412.1,7413.6,7409.6,7412.1],["00:45",7412.3,7414.6,7411.8,7413.6],["01:00",7413.3,7417.1,7412.0,7415.3],["01:15",7415.0,7417.3,7413.8,7416.3],["01:30",7416.6,7417.3,7414.6,7415.2],["01:45",7415.3,7416.1,7414.3,7415.6],["02:00",7415.3,7417.8,7414.8,7417.6],["02:15",7417.8,7419.8,7414.6,7415.1],["02:30",7414.8,7416.1,7414.1,7414.3],["02:45",7414.1,7414.1,7410.6,7413.6],["03:00",7413.8,7415.3,7410.5,7413.2],["03:15",7413.5,7414.3,7412.3,7414.1],["03:30",7414.0,7420.6,7413.3,7420.3],["03:45",7420.6,7422.6,7419.0,7421.2],["04:00",7421.6,7427.8,7420.2,7427.5],["04:15",7427.8,7429.3,7426.8,7428.6],["04:30",7428.3,7430.1,7427.6,7428.6],["04:45",7428.8,7428.8,7422.3,7423.5],["05:00",7423.3,7423.7,7417.8,7418.3],["05:15",7418.0,7420.0,7416.5,7417.6],["05:30",7417.3,7422.1,7415.8,7421.7],["05:45",7421.8,7423.8,7420.2,7423.3],["06:00",7423.6,7425.1,7418.1,7419.6],["06:15",7419.7,7422.3,7418.0,7418.7],["06:30",7418.5,7420.1,7415.5,7419.8],["06:45",7420.1,7421.3,7417.6,7418.8],["07:00",7419.1,7421.3,7415.0,7416.8],["07:15",7417.0,7418.1,7414.6,7416.8],["07:30",7416.7,7420.6,7416.0,7418.3],["07:45",7418.1,7419.1,7416.3,7417.6],["08:00",7417.5,7422.3,7416.6,7417.1],["08:15",7417.3,7417.6,7408.8,7414.9],["08:30",7414.7,7414.7,7392.7,7399.0],["08:45",7398.7,7400.7,7394.0,7397.2],["09:00",7397.7,7408.3,7397.7,7407.5],["09:15",7407.4,7411.0,7404.7,7405.7],["09:30",7403.8,7403.8,7385.8,7389.5],["09:45",7389.3,7393.0,7375.3,7389.5],["10:00",7390.0,7397.0,7388.5,7396.5],["10:15",7396.8,7407.8,7392.0,7403.8],["10:30",7403.5,7407.6,7398.3,7404.5],["10:45",7405.0,7410.6,7401.6,7409.1],["11:00",7409.3,7414.3,7407.8,7411.0],["11:15",7411.3,7415.0,7410.8,7414.3],["11:30",7413.8,7423.8,7411.0,7422.5],["11:45",7422.8,7422.8,7416.8,7418.8]],"lines":[{"y":7386.2,"col":"bull","label":"Asien-Tief"},{"y":7430.1,"col":"bear","label":"London-Hoch"},{"y":7338.8,"col":"bull","label":"Vortagestief"}],"every":8,"vlines":[{"i":62,"col":"accent","label":"09:30"}]},"choices":[["AL","Asien-Tief","ghost"],["LH","London-Hoch","ghost"],["PDL","Vortagestief","ghost"],["none","Keines bis 12:00","ghost"]],"a":"AL","why":"Um 09:40 lief der Preis zuerst unter das Asien-Tief (7.386,2). Lies den Chart ab 09:30 von links nach rechts: Welche Linie wird zuerst berührt?"},{"info":"Di 21.07.2026 · 15 Min · US 500","q":"Die Linien sind die Levels, die um 09:30 New York noch offen waren. Welches hat New York zuerst erreicht?","before":{"bands":[{"from":0,"to":36,"col":"muted","label":"Asien"},{"from":36,"to":58,"col":"warn","label":"London"},{"from":58,"to":72,"col":"accent","label":"New York"}],"bars":[["18:00",7445.0,7445.0,7436.2,7438.9],["18:15",7438.8,7440.3,7437.8,7438.8],["18:30",7438.9,7439.9,7436.0,7439.0],["18:45",7439.3,7439.8,7436.8,7438.3],["19:00",7438.5,7446.0,7437.6,7445.8],["19:15",7446.0,7452.8,7445.5,7452.5],["19:30",7452.4,7453.8,7450.8,7451.8],["19:45",7451.5,7453.5,7443.5,7448.0],["20:00",7446.8,7446.8,7437.2,7440.4],["20:15",7440.9,7451.2,7436.8,7448.9],["20:30",7449.2,7457.0,7448.7,7455.2],["20:45",7455.3,7458.7,7453.5,7455.0],["21:00",7455.5,7461.5,7452.2,7460.7],["21:15",7460.8,7462.2,7457.5,7458.5],["21:30",7458.7,7461.0,7453.8,7454.6],["21:45",7454.7,7458.7,7453.7,7455.7],["22:00",7456.2,7462.5,7455.0,7455.7],["22:15",7455.6,7460.2,7451.5,7456.7],["22:30",7457.0,7464.3,7456.8,7463.5],["22:45",7463.3,7464.8,7461.0,7464.5],["23:00",7464.8,7467.3,7464.5,7466.5],["23:15",7466.6,7470.8,7466.3,7470.8],["23:30",7471.0,7474.0,7470.3,7472.3],["23:45",7472.5,7475.9,7472.3,7475.6],["00:00",7476.0,7479.5,7475.5,7477.0],["00:15",7476.8,7477.8,7476.0,7476.8],["00:30",7477.0,7479.0,7476.3,7477.5],["00:45",7477.4,7478.5,7476.0,7477.1],["01:00",7477.0,7477.5,7474.3,7474.8],["01:15",7474.5,7479.8,7473.0,7479.5],["01:30",7480.0,7484.7,7477.3,7484.0],["01:45",7484.3,7485.6,7481.8,7483.5],["02:00",7483.8,7485.5,7482.5,7484.2],["02:15",7484.0,7485.5,7480.8,7482.7],["02:30",7483.7,7490.3,7483.0,7488.1],["02:45",7488.3,7488.5,7485.3,7486.8],["03:00",7487.0,7490.7,7483.7,7485.8],["03:15",7485.5,7485.5,7478.7,7479.7],["03:30",7480.0,7483.2,7476.7,7480.3],["03:45",7480.5,7481.0,7477.4,7480.6],["04:00",7480.8,7486.0,7478.7,7485.7],["04:15",7485.6,7487.1,7484.2,7486.5],["04:30",7486.3,7488.5,7485.2,7487.5],["04:45",7487.4,7487.4,7484.3,7486.3],["05:00",7486.0,7489.3,7485.8,7488.3],["05:15",7488.5,7491.0,7485.8,7486.0],["05:30",7486.3,7488.3,7484.3,7485.9],["05:45",7485.8,7490.0,7484.8,7485.4],["06:00",7485.5,7490.7,7483.8,7486.2],["06:15",7486.0,7489.0,7485.4,7486.7],["06:30",7486.6,7491.5,7484.2,7486.0],["06:45",7485.8,7487.7,7482.8,7484.8],["07:00",7485.0,7486.5,7478.8,7482.0],["07:15",7482.1,7482.1,7476.0,7477.2],["07:30",7477.3,7483.6,7477.2,7479.8],["07:45",7479.6,7481.5,7476.5,7477.8],["08:00",7478.0,7483.7,7476.3,7480.8],["08:15",7481.0,7481.0,7473.4,7473.8],["08:30",7473.9,7475.5,7468.2,7472.5],["08:45",7472.9,7480.2,7472.4,7478.5],["09:00",7478.8,7479.3,7474.7,7477.0],["09:15",7476.7,7488.4,7476.5,7488.4],["09:30",7488.7,7492.7,7468.4,7470.4],["09:45",7470.7,7479.5,7467.4,7479.5],["10:00",7480.0,7484.3,7475.3,7483.1],["10:15",7482.8,7495.6,7473.6,7494.8],["10:30",7494.6,7498.2,7483.8,7492.1],["10:45",7492.3,7498.7,7489.1,7493.8],["11:00",7494.0,7501.5,7484.3,7498.3],["11:15",7498.4,7506.4,7497.6,7506.4],["11:30",7505.9,7505.9,7500.4,7502.1],["11:45",7501.9,7505.9,7500.9,7501.4]],"lines":[{"y":7436.0,"col":"bull","label":"Asien-Tief"},{"y":7491.5,"col":"bear","label":"London-Hoch"},{"y":7512.7,"col":"bear","label":"Vortageshoch"}],"every":8,"vlines":[{"i":62,"col":"accent","label":"09:30"}]},"choices":[["AL","Asien-Tief","ghost"],["LH","London-Hoch","ghost"],["PDH","Vortageshoch","ghost"],["none","Keines bis 12:00","ghost"]],"a":"LH","why":"Um 09:30 lief der Preis zuerst über das London-Hoch (7.491,5). Lies den Chart ab 09:30 von links nach rechts: Welche Linie wird zuerst berührt?"},{"info":"Di 09.06.2026 · 15 Min · US 500","q":"Die Linien sind die Levels, die um 09:30 New York noch offen waren. Welches hat New York zuerst erreicht?","before":{"bands":[{"from":0,"to":36,"col":"muted","label":"Asien"},{"from":36,"to":58,"col":"warn","label":"London"},{"from":58,"to":72,"col":"accent","label":"New York"}],"bars":[["18:00",7404.5,7405.7,7384.7,7386.7],["18:15",7386.6,7389.7,7380.0,7385.0],["18:30",7384.8,7393.8,7384.7,7392.8],["18:45",7392.7,7401.8,7391.3,7400.9],["19:00",7400.8,7405.8,7398.1,7405.0],["19:15",7405.1,7405.4,7400.4,7401.4],["19:30",7401.3,7408.1,7400.1,7402.1],["19:45",7402.3,7402.4,7392.5,7399.3],["20:00",7399.5,7400.8,7383.5,7386.2],["20:15",7386.5,7390.0,7382.7,7388.5],["20:30",7388.7,7390.1,7380.0,7386.3],["20:45",7386.2,7386.7,7379.3,7384.3],["21:00",7384.7,7391.1,7382.5,7389.1],["21:15",7389.5,7406.7,7388.0,7402.7],["21:30",7403.2,7411.1,7401.2,7409.1],["21:45",7409.0,7417.0,7407.5,7408.8],["22:00",7409.0,7413.6,7408.5,7411.1],["22:15",7411.0,7411.6,7404.8,7409.2],["22:30",7409.5,7412.3,7406.5,7412.0],["22:45",7411.9,7414.3,7408.9,7412.6],["23:00",7412.2,7416.1,7410.5,7415.4],["23:15",7415.3,7418.0,7411.3,7414.4],["23:30",7414.5,7422.1,7413.5,7421.0],["23:45",7420.9,7422.1,7418.0,7419.6],["00:00",7419.3,7422.8,7417.2,7420.6],["00:15",7420.7,7424.5,7419.8,7422.7],["00:30",7422.8,7426.4,7420.9,7424.7],["00:45",7424.6,7426.1,7422.8,7423.1],["01:00",7423.6,7426.3,7422.2,7423.1],["01:15",7423.3,7425.5,7421.3,7421.5],["01:30",7421.6,7429.1,7421.5,7425.8],["01:45",7425.6,7429.8,7423.5,7425.8],["02:00",7425.9,7428.3,7424.0,7427.9],["02:15",7427.8,7431.0,7425.1,7425.6],["02:30",7425.5,7427.0,7422.8,7425.4],["02:45",7425.3,7426.7,7419.6,7422.7],["03:00",7422.6,7435.7,7420.8,7427.2],["03:15",7427.3,7429.7,7419.8,7422.5],["03:30",7422.2,7425.5,7420.0,7425.5],["03:45",7425.3,7428.0,7420.0,7421.5],["04:00",7422.0,7434.0,7417.3,7433.0],["04:15",7433.1,7434.6,7429.0,7432.1],["04:30",7432.3,7437.7,7430.3,7436.6],["04:45",7436.8,7438.0,7429.8,7431.2],["05:00",7431.3,7437.3,7430.3,7437.0],["05:15",7437.1,7439.8,7435.3,7438.5],["05:30",7438.6,7439.1,7433.8,7437.6],["05:45",7437.8,7440.3,7437.3,7437.8],["06:00",7437.9,7440.8,7425.1,7438.1],["06:15",7438.2,7438.8,7434.0,7438.3],["06:30",7438.4,7438.8,7434.6,7436.1],["06:45",7435.9,7444.3,7435.1,7440.3],["07:00",7440.4,7443.6,7438.3,7439.8],["07:15",7439.9,7440.0,7433.9,7435.8],["07:30",7435.9,7439.8,7434.3,7437.6],["07:45",7437.8,7439.5,7432.3,7432.5],["08:00",7432.1,7437.0,7431.9,7432.5],["08:15",7432.3,7434.5,7430.6,7432.9],["08:30",7432.8,7445.0,7432.8,7438.8],["08:45",7438.5,7445.5,7435.5,7445.1],["09:00",7445.5,7448.0,7440.3,7440.8],["09:15",7441.0,7448.5,7438.3,7447.7],["09:30",7446.8,7464.5,7444.0,7464.5],["09:45",7464.8,7480.0,7453.5,7454.5],["10:00",7454.2,7464.0,7428.0,7428.8],["10:15",7428.6,7435.0,7407.5,7425.3],["10:30",7424.5,7430.5,7397.5,7399.8],["10:45",7400.0,7402.3,7359.8,7391.0],["11:00",7391.5,7397.4,7376.3,7388.8],["11:15",7388.5,7390.8,7321.3,7323.3],["11:30",7323.5,7337.3,7318.5,7330.9],["11:45",7331.8,7339.8,7302.3,7303.6]],"lines":[{"y":7379.3,"col":"bull","label":"Asien-Tief"},{"y":7417.3,"col":"bull","label":"London-Tief"},{"y":7464.6,"col":"bear","label":"Vortageshoch"},{"y":7343.9,"col":"bull","label":"Vortagestief"}],"every":8,"vlines":[{"i":62,"col":"accent","label":"09:30"}]},"choices":[["AL","Asien-Tief","ghost"],["LL","London-Tief","ghost"],["PDH","Vortageshoch","ghost"],["PDL","Vortagestief","ghost"],["none","Keines bis 12:00","ghost"]],"a":"PDH","why":"Um 09:45 lief der Preis zuerst über das Vortageshoch (7.464,6). Lies den Chart ab 09:30 von links nach rechts: Welche Linie wird zuerst berührt?"},{"info":"Do 07.05.2026 · 15 Min · US 500","q":"Die Linien sind die Levels, die um 09:30 New York noch offen waren. Welches hat New York zuerst erreicht?","before":{"bands":[{"from":0,"to":36,"col":"muted","label":"Asien"},{"from":36,"to":58,"col":"warn","label":"London"},{"from":58,"to":72,"col":"accent","label":"New York"}],"bars":[["18:00",7356.4,7358.2,7353.3,7355.0],["18:15",7354.7,7357.3,7351.8,7352.3],["18:30",7352.1,7354.3,7351.8,7354.3],["18:45",7354.0,7354.6,7352.8,7353.5],["19:00",7353.3,7356.3,7352.5,7354.8],["19:15",7354.9,7356.3,7353.6,7354.4],["19:30",7354.3,7355.0,7353.0,7354.5],["19:45",7354.6,7357.0,7352.2,7354.4],["20:00",7354.5,7359.7,7353.4,7357.5],["20:15",7357.4,7358.3,7353.2,7354.9],["20:30",7354.8,7357.5,7353.7,7357.4],["20:45",7357.2,7360.2,7356.7,7359.5],["21:00",7359.3,7360.4,7355.7,7359.2],["21:15",7359.4,7361.3,7358.9,7360.6],["21:30",7360.2,7364.3,7360.2,7363.5],["21:45",7363.5,7367.8,7363.3,7364.8],["22:00",7364.5,7365.8,7357.7,7358.2],["22:15",7358.3,7362.7,7357.9,7362.7],["22:30",7363.0,7363.7,7360.2,7361.0],["22:45",7361.3,7364.0,7361.0,7363.0],["23:00",7363.3,7363.3,7361.5,7362.5],["23:15",7362.4,7365.4,7361.8,7364.3],["23:30",7364.0,7366.0,7364.0,7366.0],["23:45",7365.9,7366.5,7365.0,7365.3],["00:00",7365.0,7367.0,7364.3,7366.4],["00:15",7366.3,7368.8,7366.3,7368.0],["00:30",7368.1,7368.5,7366.5,7367.3],["00:45",7367.0,7368.8,7366.5,7368.0],["01:00",7367.8,7369.5,7366.8,7369.0],["01:15",7368.8,7369.0,7366.5,7367.3],["01:30",7367.5,7370.3,7367.5,7369.5],["01:45",7369.6,7369.8,7368.3,7368.5],["02:00",7368.3,7370.3,7365.4,7365.5],["02:15",7365.3,7370.3,7365.0,7368.8],["02:30",7369.0,7377.4,7367.8,7375.9],["02:45",7375.8,7376.2,7371.4,7373.9],["03:00",7374.0,7384.0,7370.2,7383.8],["03:15",7384.4,7385.2,7374.7,7376.3],["03:30",7376.7,7380.4,7375.7,7378.2],["03:45",7378.0,7378.4,7373.7,7376.6],["04:00",7377.0,7382.9,7374.9,7376.7],["04:15",7376.4,7377.0,7369.3,7372.7],["04:30",7372.8,7374.5,7370.7,7370.9],["04:45",7370.7,7373.5,7368.4,7369.9],["05:00",7369.7,7370.8,7366.9,7369.7],["05:15",7369.9,7373.9,7369.7,7371.2],["05:30",7371.1,7372.7,7369.7,7370.4],["05:45",7370.5,7373.8,7366.7,7368.7],["06:00",7368.5,7369.2,7364.4,7367.9],["06:15",7368.0,7371.5,7366.2,7369.4],["06:30",7369.5,7373.3,7368.4,7372.7],["06:45",7373.0,7373.0,7369.7,7369.9],["07:00",7371.2,7373.7,7370.2,7371.2],["07:15",7371.0,7371.5,7367.7,7368.4],["07:30",7368.2,7372.8,7367.5,7370.7],["07:45",7370.5,7372.3,7367.9,7371.3],["08:00",7371.0,7376.7,7370.0,7376.0],["08:15",7375.7,7376.5,7371.2,7375.0],["08:30",7374.5,7377.3,7373.5,7376.5],["08:45",7376.5,7377.3,7373.2,7376.4],["09:00",7376.2,7376.4,7370.4,7371.9],["09:15",7372.2,7376.7,7371.9,7374.2],["09:30",7373.9,7374.4,7365.0,7365.5],["09:45",7366.0,7367.5,7358.5,7362.2],["10:00",7362.5,7372.0,7362.0,7368.2],["10:15",7368.0,7373.3,7364.5,7368.3],["10:30",7368.5,7376.4,7367.7,7374.8],["10:45",7375.0,7384.0,7373.3,7384.0],["11:00",7384.1,7384.3,7375.0,7376.0],["11:15",7376.2,7379.0,7365.9,7371.9],["11:30",7372.9,7379.0,7371.4,7376.0],["11:45",7375.8,7377.0,7360.7,7362.5]],"lines":[{"y":7351.8,"col":"bull","label":"Asien-Tief"},{"y":7385.2,"col":"bear","label":"London-Hoch"},{"y":7364.4,"col":"bull","label":"London-Tief"},{"y":7268.6,"col":"bull","label":"Vortagestief"}],"every":8,"vlines":[{"i":62,"col":"accent","label":"09:30"}]},"choices":[["AL","Asien-Tief","ghost"],["LH","London-Hoch","ghost"],["LL","London-Tief","ghost"],["PDL","Vortagestief","ghost"],["none","Keines bis 12:00","ghost"]],"a":"LL","why":"Um 09:45 lief der Preis zuerst unter das London-Tief (7.364,4). Lies den Chart ab 09:30 von links nach rechts: Welche Linie wird zuerst berührt?"}],"opt":{"unit":"Tag","tall":true,"label":"15-Minuten-Chart mit Session-Levels"}}};
+const QUIZ=[{"t":"Wann läuft die London-Session (New Yorker Zeit)?","o":["18:00–03:00","03:00–08:30","08:30–17:00"],"a":1,"e":"Asien 18–03, London 03–08:30, New York 08:30–17 Uhr."},{"t":"Was ist die Grundidee hinter Session-Levels?","o":["Jede Session holt zuerst die Liquidität der vorherigen","Die Asien-Session bestimmt den Tagestrend","Session-Levels werden nie erreicht"],"a":0,"e":"Neues Geld sucht zuerst die Orders an den Hochs und Tiefs der letzten Session."},{"t":"Warum sind gleiche Hochs (EQH) ein starkes Ziel?","o":["Weil dort doppelt so viele Stops und Ausbruchsorders liegen","Weil sie selten sind","Weil der Preis dort immer dreht"],"a":0,"e":"Zwei Hochs auf gleichem Niveau = Orders von beiden an einer Stelle."},{"t":"Was ist Low-Resistance-Liquidität?","o":["Ein einzelnes Wochenhoch","Gestapelte Hochs oder Tiefs innerhalb eines Trends","Liquidität nachts"],"a":1,"e":"Mehrere Tiefs übereinander im Aufwärtstrend werden nach einer Wende nacheinander geholt."},{"t":"CPI-Daten kommen um 08:30 New York. Wie spät ist es in Deutschland (Winterzeit)?","o":["13:30","14:30","15:30"],"a":1,"e":"6 Stunden Abstand im Winter. In den Umstellungswochen kann es 5 Stunden sein."},{"t":"Wiederholung Lektion 5: Der Docht sticht über das Hoch, und die Kerze schließt ebenfalls über dem Hoch. Was ist das?","o":["Sweep","Durchbruch","Equal High"],"a":1,"e":"Schluss jenseits des Levels = Durchbruch."},{"t":"Wiederholung Lektion 4: Was tust du an einem Tag mit CPI-Daten?","o":["Positionsgröße halbieren","Doppelte Größe, weil sich mehr bewegt","Ganz normal handeln"],"a":0,"e":"TJR halbiert an News-Tagen."}];
+/* Trading-Kurs shared runtime */
+const TK=(function(){
+  const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const de=(n,d=1)=>Number(n).toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+  let tjr=store.get('tk-colors')==='tjr';
+  const upCol=()=>tjr?css('--accent'):css('--bull'),dnCol=()=>tjr?css('--fg'):css('--bear');
+  const COL=k=>({accent:css('--accent'),bull:css('--bull'),bear:css('--bear'),muted:css('--muted'),warn:css('--warn'),fg:css('--fg')}[k]||k);
+  const SOFT=k=>({accent:css('--accent-soft'),bull:css('--bull-soft'),bear:css('--bear-soft'),warn:css('--warn-soft'),muted:css('--grid')}[k]||k);
+  const redraws=[];
+  function onRedraw(f){redraws.push(f)}
+  function redrawAll(){redraws.forEach(f=>{try{f()}catch(e){console.error(e)}})}
+
+  function prep(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);return[c,W,H]}
+
+  /* draw one pane into rect */
+  function pane(c,X,Y,W,H,p){
+    const bars=p.bars,n=bars.length,vis=p.cut!=null?Math.min(p.cut,n):n;
+    let hi=-Infinity,lo=Infinity;
+    const src=p.scaleAll?bars:bars.slice(0,vis);
+    src.forEach(b=>{hi=Math.max(hi,b[2]);lo=Math.min(lo,b[3])});
+    (p.lines||[]).forEach(l=>{if(l.scale!==false){hi=Math.max(hi,l.y);lo=Math.min(lo,l.y)}});
+    (p.zones||[]).forEach(z=>{if(z.scale!==false){hi=Math.max(hi,z.hi);lo=Math.min(lo,z.lo)}});
+    if(p.extra){hi=Math.max(hi,...p.extra);lo=Math.min(lo,...p.extra)}
+    const pd=(hi-lo)*(p.pad??.08)||1;hi+=pd;lo-=pd;if(p.zoom){lo=p.zoom[0];hi=p.zoom[1]}
+    const L=X+8,R=X+W-58,T=Y+(p.title?22:12),B=Y+H-22,cw=(R-L)/n;
+    const y=v=>T+(hi-v)/(hi-lo)*(B-T),x=i=>L+i*cw+cw/2,xl=i=>L+i*cw;
+    c.font='11px '+css('--f-mono');c.lineWidth=1;
+    for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4,yy=Math.round(y(v))+.5;c.strokeStyle=css('--line');c.beginPath();c.moveTo(L,yy);c.lineTo(R,yy);c.stroke();c.fillStyle=css('--muted');c.fillText(v.toFixed(1),R+6,yy+4)}
+    c.save();c.beginPath();c.rect(X,T-14,W,B-T+14);c.clip();
+    (p.bands||[]).forEach(b=>{const a=xl(b.from),e=xl(Math.min(b.to,n));c.fillStyle=SOFT(b.col||'accent');c.fillRect(a,T,e-a,B-T);if(b.label){c.fillStyle=COL(b.col||'accent');c.font='600 10px '+css('--f-mono');c.fillText(b.label,a+3,T+11);c.font='11px '+css('--f-mono')}});
+    if(p.cut!=null&&p.cut<n&&p.shadeHidden!==false){const a=xl(vis);c.fillStyle=css('--accent-soft');c.fillRect(a,T,R-a,B-T);c.fillStyle=css('--muted');c.font='600 20px '+css('--f-display');c.textAlign='center';c.fillText('?',(a+R)/2,(T+B)/2);c.textAlign='left';c.font='11px '+css('--f-mono')}
+    (p.zones||[]).forEach(z=>{if(z.from>=vis&&!z.always)return;const a=xl(z.from),e=xl(Math.min(z.to??n,z.clip===false?n:(p.cut!=null?Math.max(vis,z.from+1):n)));c.fillStyle=SOFT(z.col||'accent');c.globalAlpha=.9;c.fillRect(a,y(z.hi),Math.max(2,e-a),Math.max(1,y(z.lo)-y(z.hi)));c.globalAlpha=1;c.strokeStyle=COL(z.col||'accent');c.strokeRect(a+.5,y(z.hi)+.5,Math.max(2,e-a)-1,Math.max(1,y(z.lo)-y(z.hi))-1);if(z.label){c.fillStyle=COL(z.col||'accent');c.font='600 10px '+css('--f-mono');c.fillText(z.label,a+3,y(z.hi)-4);c.font='11px '+css('--f-mono')}});
+    const every=Math.max(p.every||1,Math.ceil(46/cw),p.every?1:Math.ceil(n/6));c.fillStyle=css('--muted');
+    bars.forEach((b,i)=>{if(i%every===0&&b[0])c.fillText(b[0],xl(i)+1,B+15)});
+    if(p.title){c.fillStyle=css('--fg');c.font='600 11px '+css('--f-mono');c.fillText(p.title,L,Y+13);c.font='11px '+css('--f-mono')}
+    for(let i=0;i<vis;i++){const b=bars[i],xx=x(i),col=b[4]>=b[1]?upCol():dnCol();c.strokeStyle=col;c.fillStyle=col;c.beginPath();c.moveTo(Math.round(xx)+.5,y(b[2]));c.lineTo(Math.round(xx)+.5,y(b[3]));c.stroke();const bw=Math.max(1.5,Math.min(cw*.62,36)),t=y(Math.max(b[1],b[4]));c.fillRect(xx-bw/2,t,bw,Math.max(1,Math.abs(y(b[1])-y(b[4]))))}
+    (p.hl||[]).forEach(i=>{if(i>=vis)return;const b=bars[i];c.strokeStyle=COL('warn');c.lineWidth=2;c.strokeRect(xl(i)+1,y(b[2])-4,cw-2,y(b[3])-y(b[2])+8);c.lineWidth=1});
+    (p.lines||[]).forEach(l=>{if(l.y>hi||l.y<lo)return;const a=xl(l.from||0),e=l.to!=null?xl(Math.min(l.to,n)):R,yy=Math.round(y(l.y))+.5;c.strokeStyle=COL(l.col||'accent');c.lineWidth=l.w||1.5;if(l.dash!==false)c.setLineDash([5,4]);c.beginPath();c.moveTo(a,yy);c.lineTo(e,yy);c.stroke();c.setLineDash([]);c.lineWidth=1;if(l.label){c.font='600 10px '+css('--f-mono');const tw=c.measureText(l.label).width;const lx=l.labelLeft?a+2:Math.max(L,e-tw-4);c.fillStyle=css('--paper');c.fillRect(lx-2,yy-13,tw+4,12);c.fillStyle=COL(l.col||'accent');c.fillText(l.label,lx,yy-3);c.font='11px '+css('--f-mono')}});
+    (p.marks||[]).forEach(m=>{if(m.i>=vis&&!m.always)return;const b=bars[m.i],xx=x(m.i),col=COL(m.col||'accent');c.fillStyle=col;c.strokeStyle=col;c.beginPath();if(m.pos==='below'){const yy=y(b[3])+5;c.moveTo(xx,yy);c.lineTo(xx-6,yy+10);c.lineTo(xx+6,yy+10)}else{const yy=y(b[2])-5;c.moveTo(xx,yy);c.lineTo(xx-6,yy-10);c.lineTo(xx+6,yy-10)}c.closePath();if(m.hollow){c.lineWidth=2;c.stroke();c.lineWidth=1}else c.fill();if(m.label){c.font='600 10px '+css('--f-mono');c.textAlign='center';c.fillText(m.label,xx,m.pos==='below'?y(b[3])+27:y(b[2])-19);c.textAlign='left';c.font='11px '+css('--f-mono')}});
+    (p.vlines||[]).forEach(v=>{const xx=Math.round(xl(v.i))+.5;c.strokeStyle=COL(v.col||'accent');c.setLineDash([3,3]);c.beginPath();c.moveTo(xx,T);c.lineTo(xx,B);c.stroke();c.setLineDash([]);if(v.label){c.fillStyle=COL(v.col||'accent');c.font='600 10px '+css('--f-mono');c.fillText(v.label,xx+3,B-4);c.font='11px '+css('--f-mono')}});
+    c.restore();
+    return {L,R,T,B,cw,y,x,xl,hi,lo,n,inv:yy=>hi-(yy-T)/(B-T)*(hi-lo)};
+  }
+  function draw(cv,spec){
+    const [c,W,H]=prep(cv);const ps=spec.panes||[spec];const h=H/ps.length;const geos=[];
+    ps.forEach((p,k)=>{if(k>0){c.strokeStyle=css('--line');c.beginPath();c.moveTo(0,Math.round(k*h)+.5);c.lineTo(W,Math.round(k*h)+.5);c.stroke()}geos.push(pane(c,0,k*h,W,h,p))});
+    return geos;
+  }
+
+  /* exercise engine */
+  function exercise(root,id,items,opt={}){
+    const P='tk-'+opt.lesson+'-ex-'+id;let res=[];try{res=JSON.parse(store.get(P)||'[]')}catch(e){}
+    let i=Math.min(res.length,items.length-1),picked=null,zoomed=false;
+    function focus(p){let a=null,b=null;const z=(p.zones||[])[0];if(z){a=z.lo;b=z.hi}else{const l=(p.lines||[]).find(l=>l.label&&l.label!=='Dein Tipp');if(l){a=b=l.y}}if(a==null)return null;let hi=-Infinity,lo=Infinity;p.bars.forEach(x=>{hi=Math.max(hi,x[2]);lo=Math.min(lo,x[3])});const h=Math.max(b-a,(hi-lo)*.04,1);return [a-h*2.5,b+h*2.5]}
+    root.innerHTML='<div class="ex-head"><span class="eyebrow" data-r="info"></span><span class="row" style="gap:10px"><button class="btn ghost" type="button" data-r="zoom" style="padding:4px 10px;font-size:.85rem" hidden>🔍 Lupe</button><span class="mono" data-r="score"></span></span></div><div class="chartbox'+(opt.tall?' tall':'')+(opt.dual?' dual':'')+(opt.pick?' click':'')+'"><canvas aria-label="'+(opt.label||'Kerzenchart')+'"></canvas></div><p class="mono" data-r="ohlc" style="color:var(--muted);min-height:1.3em;margin:0">Tippe auf eine Kerze für ihre genauen Werte.</p><p class="qt" data-r="q"></p><div class="row" data-r="btns"></div><p class="result" data-r="res" aria-live="polite"></p><div class="row"><button class="btn ghost" type="button" data-r="next" hidden>Weiter</button><button class="btn ghost" type="button" data-r="redo" hidden>Übung neu starten</button></div>';
+    const $=k=>root.querySelector('[data-r="'+k+'"]'),cv=root.querySelector('canvas');let geos=null;
+    function spec(){const it=items[i],done=res[i]!==undefined;let s=done&&it.after?it.after:it.before;
+      if(opt.pick&&picked!=null&&!done){s=JSON.parse(JSON.stringify(s));const p=(s.panes||[s])[it.pane||0];if(it.mode==='y'){p.lines=(p.lines||[]).concat([{y:picked,col:'accent',label:'Dein Tipp',dash:false}])}else{p.marks=(p.marks||[]).concat([{i:picked,pos:it.markPos||'above',col:'accent',label:'Dein Tipp'}])}}
+      if(opt.pick&&done&&it.mode==='y'&&res[i].v!=null){s=JSON.parse(JSON.stringify(s));const p=(s.panes||[s])[it.pane||0];p.lines=(p.lines||[]).concat([{y:res[i].v,col:res[i].ok?'bull':'bear',label:'Dein Tipp',dash:false,scale:false}])}
+      if(opt.pick&&done&&it.mode!=='y'&&res[i].v!=null){s=JSON.parse(JSON.stringify(s));const p=(s.panes||[s])[it.pane||0];p.marks=(p.marks||[]).concat([{i:res[i].v,pos:it.markPos||'above',col:res[i].ok?'bull':'bear',label:'Dein Tipp',hollow:true}])}
+      if(zoomed){s=JSON.parse(JSON.stringify(s));(s.panes||[s]).forEach(p=>{const f=focus(p);if(f)p.zoom=f})}
+      return s}
+    function render(){
+      const it=items[i],done=res[i]!==undefined;geos=draw(cv,spec());
+      $('info').textContent=(opt.unit||'Aufgabe')+' '+(i+1)+' / '+items.length+(it.info?' · '+it.info:'');
+      const ok=res.filter(r=>r&&r.ok).length;$('score').textContent=ok+' / '+res.length+' richtig';
+      $('q').textContent=it.q;const sp=spec();const hasF=(sp.panes||[sp]).some(p=>focus(p));const zb=$('zoom');zb.hidden=!hasF;zb.textContent=zoomed?'Ganzer Chart':'🔍 Lupe';
+      const bt=$('btns');bt.innerHTML='';
+      if(!opt.pick){(it.choices||opt.choices).forEach(ch=>{const b=document.createElement('button');b.type='button';b.className='btn '+(ch[2]||'ghost');b.textContent=ch[1];b.disabled=done;b.addEventListener('click',()=>{if(res[i]!==undefined)return;res[i]={ok:ch[0]===it.a,v:ch[0]};store.set(P,JSON.stringify(res));render()});bt.appendChild(b)})}
+      else if(!done){const b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Prüfen';b.disabled=picked==null;b.addEventListener('click',check);bt.appendChild(b);const h=document.createElement('span');h.className='mono';h.style.color='var(--muted)';h.textContent=it.mode==='y'?'Tippe auf die Höhe im Chart':'Tippe auf die Kerze im Chart';bt.appendChild(h)}
+      const r=$('res');
+      if(done){const lab=(it.choices||opt.choices||[]).find(c=>c[0]===it.a);r.className='result '+(res[i].ok?'ok':'no');r.innerHTML=(res[i].ok?'Richtig. ':'Nicht ganz. '+(lab&&!opt.pick?'Richtig ist: '+lab[1]+'. ':''))+'<span style="color:var(--muted);font-weight:400">'+it.why+'</span>'}else{r.textContent='';r.className='result'}
+      $('next').hidden=!(done&&i<items.length-1);
+      const all=res.length===items.length&&res.every(x=>x);$('redo').hidden=!all;
+      if(all&&i===items.length-1&&opt.summary){r.innerHTML+='<br><strong>'+opt.summary(ok,items.length)+'</strong>'}
+    }
+    function check(){const it=items[i];if(picked==null)return;let ok;if(it.mode==='y'){ok=Math.abs(picked-it.y)<=it.tol}else{ok=it.ok.includes(picked)}res[i]={ok,v:picked};picked=null;store.set(P,JSON.stringify(res));render()}
+    if(opt.pick){cv.addEventListener('click',ev=>{const it=items[i];if(res[i]!==undefined||!geos)return;const r=cv.getBoundingClientRect(),xx=ev.clientX-r.left,yy=ev.clientY-r.top;const g=geos[it.pane||0];if(it.mode==='y'){if(yy<g.T||yy>g.B)return;picked=g.inv(yy)}else{const k=Math.floor((xx-g.L)/g.cw);if(k<0||k>=g.n)return;const lim=(spec().panes||[spec()])[it.pane||0].cut;if(lim!=null&&k>=lim)return;picked=k}render()})}
+    $('next').addEventListener('click',()=>{i++;picked=null;zoomed=false;$('ohlc').textContent='Tippe auf eine Kerze für ihre genauen Werte.';render()});
+    $('zoom').addEventListener('click',()=>{zoomed=!zoomed;render()});
+    function readout(ev){if(!geos)return;const r=cv.getBoundingClientRect(),xx=ev.clientX-r.left,yy=ev.clientY-r.top;const sp=spec(),ps=sp.panes||[sp];
+      geos.forEach((g,k)=>{if(yy<g.T-14||yy>g.B+4)return;const j=Math.floor((xx-g.L)/g.cw);const p=ps[k];const vis=p.cut!=null?Math.min(p.cut,p.bars.length):p.bars.length;if(j<0||j>=vis)return;const b=p.bars[j];
+        let t=(b[0]?b[0]+' · ':'')+'O '+de(b[1])+' · H '+de(b[2])+' · L '+de(b[3])+' · C '+de(b[4]);const z=(p.zones||[])[0];if(z)t+=' · Zone '+de(z.lo)+'–'+de(z.hi);else{const l=(p.lines||[]).find(l=>l.label&&l.label!=='Dein Tipp');if(l)t+=' · Linie '+de(l.y)}
+        $('ohlc').textContent=(ps.length>1&&p.title?p.title.split(' · ')[0]+': ':'')+t})}
+    cv.addEventListener('click',readout);cv.addEventListener('mousemove',readout);
+    $('redo').addEventListener('click',()=>{res=[];i=0;picked=null;store.set(P,'[]');render()});
+    onRedraw(render);render();
+  }
+
+  function quiz(root,Q,lesson){
+    const P='tk-'+lesson+'-quiz';let ans={};try{ans=JSON.parse(store.get(P)||'{}')}catch(e){}
+    root.innerHTML='<div data-r="qs"></div><div class="score"><span>Ergebnis: <b data-r="sc"></b></span><span data-r="st" class="pill open">offen</span><button class="btn ghost" type="button" data-r="reset">Quiz neu starten</button></div>';
+    const box=root.querySelector('[data-r="qs"]');
+    function render(){box.innerHTML='';
+      Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';const p=document.createElement('p');p.className='qt';p.textContent=(i+1)+'. '+q.t;d.appendChild(p);const os=document.createElement('div');os.className='opts';
+        q.o.forEach((o,j)=>{const b=document.createElement('button');b.type='button';b.className='opt';b.textContent=o;if(ans[i]!==undefined){b.disabled=true;if(j===q.a)b.classList.add('right');else if(j===ans[i])b.classList.add('wrong')}b.addEventListener('click',()=>{ans[i]=j;store.set(P,JSON.stringify(ans));render()});os.appendChild(b)});
+        d.appendChild(os);if(ans[i]!==undefined){const ok=ans[i]===q.a,fb=document.createElement('p');fb.className='fb';fb.innerHTML='<strong class="'+(ok?'ok':'no')+'">'+(ok?'Richtig.':'Nicht ganz.')+'</strong> ';fb.appendChild(document.createTextNode(q.e));d.appendChild(fb)}box.appendChild(d)});
+      const done=Object.keys(ans).length,right=Q.filter((q,i)=>ans[i]===q.a).length;root.querySelector('[data-r="sc"]').textContent=right+' / '+Q.length;const st=root.querySelector('[data-r="st"]');
+      if(done<Q.length){st.className='pill open';st.textContent='offen'}else if(right/Q.length>=.8){st.className='pill pass';st.textContent='bestanden'}else{st.className='pill fail';st.textContent='nicht bestanden – Lektion wiederholen'}}
+    root.querySelector('[data-r="reset"]').addEventListener('click',()=>{ans={};store.set(P,'{}');render()});render();
+  }
+  function explain(root,lesson){
+    const P='tk-'+lesson+'-explain';const ta=root.querySelector('textarea'),btn=root.querySelector('[data-r="copy"]'),c=root.querySelector('[data-r="copied"]');
+    const v=store.get(P);if(v)ta.value=v;ta.addEventListener('input',()=>store.set(P,ta.value));
+    btn.addEventListener('click',()=>{const show=t=>{c.textContent=t;c.hidden=false;setTimeout(()=>c.hidden=true,2000)};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(()=>show('Kopiert'),()=>{ta.select();show('Markiert – jetzt Cmd+C')})}else{ta.select();show('Markiert – jetzt Cmd+C')}});
+  }
+  function colors(){const a=document.getElementById('col-gr'),b=document.getElementById('col-tjr');if(!a)return;const set=v=>{tjr=v;store.set('tk-colors',v?'tjr':'gr');b.setAttribute('aria-pressed',v);a.setAttribute('aria-pressed',!v);redrawAll()};a.addEventListener('click',()=>set(false));b.addEventListener('click',()=>set(true));b.setAttribute('aria-pressed',tjr);a.setAttribute('aria-pressed',!tjr)}
+  function boot(){colors();let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(redrawAll,120)});window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redrawAll);new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(redrawAll)}
+  return {store,css,de,draw,exercise,quiz,explain,boot,onRedraw,redrawAll,prep,COL,SOFT,upCol,dnCol};
+})();
+
+(function(){
+  const L="l6";
+  Object.keys(EX).forEach(id=>{const el=document.getElementById('ex-'+id);if(el)TK.exercise(el,id,EX[id].items,Object.assign({lesson:L},EX[id].opt||{}))});
+  TK.quiz(document.getElementById('quiz'),QUIZ,L);
+  TK.explain(document.getElementById('explain'),L);
+  
+  TK.boot();
+})();
+</script>
+
+</body></html>

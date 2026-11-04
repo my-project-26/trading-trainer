@@ -19,6 +19,7 @@
       <a href="#lernen" data-v="lernen">Nachschlagen</a>
       <a href="#trainer" data-v="trainer">Trainer</a>
       <a href="#werkzeuge" data-v="werkzeuge">Tagesablauf</a>
+      <a href="#lektionen" data-v="lektionen">Lektionen</a>
     </nav>
     <div class="seg" id="scheme" role="group" aria-label="Kerzenfarben">
       <button type="button" data-s="rg" aria-pressed="true"><span class="sw rg" aria-hidden="true"><i></i><i></i></span>Rot/Grün</button>
@@ -141,6 +142,21 @@
         </div>
       </div>
     </div>
+  </section>
+  <!-- Lektionen -->
+  <section class="view" id="v-lektionen" hidden>
+    <div class="pagehead">
+      <h1>Lektionen</h1>
+      <p class="lead">Alle 16 Lektionen des TJR-Kurses, dazu die Lektionen zum US-500-Journal und zu deinen cTrader-Werkzeugen. Wähl eine Lektion aus der Liste. Fortschritt und Quiz-Antworten bleiben in diesem Browser gespeichert.</p>
+    </div>
+    <div class="lessonbar">
+      <label class="lessonpick" for="lessonsel"><span>Lektion</span>
+        <select id="lessonsel" class="lessonsel"></select>
+      </label>
+      <a class="btn ghost" id="lessonopen" href="lektionen/bias-vor-1530.html" target="_blank" rel="noopener">In eigenem Tab öffnen ↗</a>
+    </div>
+    <p class="lead" id="lessondesc" style="margin:0 0 14px"></p>
+    <div class="lessonframe"><iframe id="lessonframe" title="Lektion" loading="lazy"></iframe></div>
   </section>
 </main>
 
