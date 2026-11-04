@@ -220,6 +220,14 @@ th { font-family: var(--f-mono); font-size: 0.72rem; text-transform: uppercase; 
 .linkbtn { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font-size: 0.85rem; text-decoration: underline; }
 .done { text-align: center; padding: 20px 0; }
 
+/* Hilfe bei falscher Antwort */
+.help { margin-top: 12px; border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); background: color-mix(in srgb, var(--accent) 6%, var(--paper)); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.help-h { margin: 0; font-family: var(--f-display); font-weight: 700; color: var(--accent); }
+.help-x { margin: 0; }
+.help-note { margin: 0; font-size: 0.88rem; color: var(--muted); }
+.help-figs { display: flex; flex-direction: column; gap: 10px; }
+.help .btn { align-self: flex-start; }
+
 /* Werkzeuge */
 .tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .tools .card h2 { font-size: 1.15rem; margin-bottom: 10px; }

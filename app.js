@@ -104,7 +104,9 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
   }
   function renderTimeline() {
     const el = document.getElementById('timeline');
-    if (!el) return;
+    if (el) el.innerHTML = timelineHTML();
+  }
+  function timelineHTML() {
     const R = [
       ['Asien', '18:00', '03:00', 'Asien-Hoch und -Tief entstehen'],
       ['London', '03:00', '08:30', 'Holt oft ein Asien-Level'],
@@ -120,7 +122,7 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
     h += '</div>';
     const g = gap();
     if (g !== 6) h += `<p class="note-dst">Diese Woche Sonderfall: ${g} statt 6 Stunden Abstand. NY-Eröffnung ist um ${de('09:30')} Uhr.</p>`;
-    el.innerHTML = h;
+    return h;
   }
 
   /* ---------- Trainer ---------- */
@@ -192,6 +194,7 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
   function nextQ() {
     answered = false;
     $('#fb').innerHTML = ''; $('#next').hidden = true;
+    $('#help').innerHTML = ''; $('#help').hidden = true;
     if (trainerMode === 'bank') {
       const open = pool().filter(q => !learned(q));
       if (!open.length) {
@@ -269,13 +272,37 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
       S.streak = ok ? (S.streak || 0) + 1 : 0;
       head = ok ? 'Richtig.' : 'Nicht ganz.';
       expl = cur.d.e;
-      if (cur.d.after) $('#qfig').innerHTML = `<div class="chwrap">${TT.chart(cur.d.after)}</div>`;
+      if (cur.d.after) { $('#qfig').innerHTML = `<div class="chwrap">${TT.chart(cur.d.after)}</div>`; $('#qfig').hidden = false; }
     }
     save();
     $('#fb').innerHTML = `<strong class="${ok ? 'ok' : 'no'}">${head}</strong> `;
     $('#fb').appendChild(document.createTextNode(expl));
+    if (!ok) showHelp();
     $('#next').hidden = false; $('#next').focus({ preventScroll: true });
     renderTrainer(false);
+  }
+
+  /* Hilfe mit Schaubild bei falscher Antwort */
+  const DRILL_TOPIC = { sweep: 'sweep', fvg: 'fvg', bos: 'bos', level: 'bos', fvgval: 'fvgstatus', swing: 'swing', eq: 'eq', size: 'risiko' };
+  function showHelp() {
+    let figs = '', x = '', topic = '';
+    if (cur.kind === 'bank') {
+      const h = HELP[cur.q.id];
+      if (!h) return;
+      figs = (h.f || []).map(name => name === 'TIMELINE' ? timelineHTML() : (F[name] ? `<div class="chwrap">${TT.chart(F[name]())}</div>` : '')).join('');
+      x = h.x || ''; topic = h.t || '';
+    } else {
+      x = cur.d.x || '';
+      topic = DRILL_TOPIC[cur.k] || '';
+      if (cur.d.after) figs = '<p class="help-note">Oben im Chart ist jetzt beschriftet, worauf es ankommt.</p>';
+    }
+    const t = TOPICS.find(tp => tp.id === topic);
+    const box = $('#help');
+    box.innerHTML = `<p class="help-h">So geht's</p>${x ? `<p class="help-x">${TT.esc(x)}</p>` : ''}${figs ? `<div class="help-figs">${figs}</div>` : ''}` +
+      (t ? `<button class="btn ghost" type="button" data-topic="${t.id}">Im Nachschlagen: ${TT.esc(t.t)}</button>` : '');
+    box.hidden = false;
+    const b = $('[data-topic]', box);
+    if (b) b.addEventListener('click', () => { location.hash = '#t-' + b.dataset.topic; });
   }
 
   /* ---------- Werkzeuge ---------- */
