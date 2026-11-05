@@ -52,7 +52,12 @@
         <b>Durchbruch unten</b><span>Tief erreicht, Preis steht um 15:30 darunter.</span>
       </div>
     </div>
-    <p>Die blaue Linie in den Bildern ist der Kurs um 15:30. Ein Sweep kann eine einzelne Kerze mit langem Docht oder langer Lunte sein. Er kann aber auch aus mehreren Kerzen bestehen, die über das Level laufen und später zurückkommen. Das zählt beides als Sweep, weil am Ende nur der Stand um 15:30 entscheidet.</p>
+    <p>Die blaue Linie in den Bildern ist der Kurs um 15:30. Kommt der Preis bis 15:30 zurück, gibt es zwei Fälle, die du im Chart unterscheidest:</p>
+    <ul>
+      <li><strong>Sweep (S):</strong> Nur Docht oder Lunte gehen über das Level, keine Kerze schließt jenseits. Die Kerzenregel aus Lektion 5.</li>
+      <li><strong>Fehlausbruch (F):</strong> Kerzen schließen jenseits des Levels, das ist erst ein Durchbruch. Bis 15:30 kommt der Preis aber zurück, der Durchbruch ist gescheitert.</li>
+    </ul>
+    <p>Für den Bias zählen beide gleich: Die Liquidität auf dieser Seite ist geholt, und der Markt wollte dort nicht bleiben. Steht der Preis um 15:30 noch jenseits, bleibt es ein Durchbruch (D) und zählt nicht.</p>
     <p class="box-note">Warum das funktioniert: Ein Sweep zeigt, dass der Markt die Stopps auf dieser Seite abgeholt hat und dort nicht bleiben wollte. Die Liquidität auf der Gegenseite ist noch da, also ist sie das wahrscheinlichere Ziel.</p>
   </section>
 
@@ -112,7 +117,7 @@
   <section id="uebungen">
     <span class="eyebrow">5 · Geführt üben</span>
     <h2>Zwanzig Charts, Schritt für Schritt</h2>
-    <p>Die blaue Linie zeigt den Kurs um 15:30. Vergleich jede Level-Linie mit ihr: Liegt ein berührtes Hoch über der blauen Linie, war es ein Sweep. Liegt es darunter, ein Durchbruch. Für Tiefs gilt das umgekehrt. Nach Frage 1 markiert der Chart jedes berührte Level mit S (Sweep) oder D (Durchbruch). Mit „Tipp“ siehst du die Markierungen vorher. Zeiten in New-Yorker Zeit wie in deinem Chart, Kurse sind Übungsdaten.</p>
+    <p>Die blaue Linie zeigt den Kurs um 15:30. Vergleich jede Level-Linie mit ihr: Liegt ein berührtes Hoch über der blauen Linie, war es ein Sweep. Liegt es darunter, ein Durchbruch. Für Tiefs gilt das umgekehrt. Nach Frage 1 markiert der Chart jedes berührte Level mit S (Sweep), F (Fehlausbruch) oder D (Durchbruch). Mit „Tipp“ siehst du die Markierungen vorher. Zeiten in New-Yorker Zeit wie in deinem Chart, Kurse sind Übungsdaten.</p>
     <div class="score" aria-live="polite"><span>Richtige Antworten: <strong id="sc-steps">0 / 0</strong></span><span>Trefferquote der Regel: <strong id="sc-hit">–</strong></span></div>
     <div id="exercises" style="display:grid;gap:18px"></div>
     <button class="reset" id="reset-all" type="button">Alle Übungen zurücksetzen</button>
@@ -124,7 +129,7 @@
     <ul class="mistakes">
       <li>Der Richtung der letzten großen Kerze folgen. Eine lange grüne Kerze in London sagt nichts, solange du nicht weißt, auf welcher Seite die Sweeps liegen.</li>
       <li>Jede Berührung als Sweep zählen. Steht der Preis um 15:30 jenseits des Levels, war es ein Durchbruch und zählt nicht.</li>
-      <li>Nur auf einzelne Dochte schauen. Ein Sweep über mehrere Kerzen ist genauso ein Sweep.</li>
+      <li>Nur auf einzelne Dochte schauen. Ein Fehlausbruch über mehrere Kerzen, die später zurückkommen, zählt für den Bias wie ein Sweep.</li>
       <li>„Keiner“ vermeiden wollen. Sweeps auf beiden Seiten sind ein klares Signal für einen unklaren Tag.</li>
       <li>Den Bias nach 15:30 noch korrigieren. Dann misst die Statistik nichts mehr.</li>
     </ul>
@@ -134,7 +139,7 @@
 <script>
 (function () {
   var NAMES = { bull: "Bullish", bear: "Bearish", none: "Keiner" };
-  var SIDE = { low: "Nur unten", high: "Nur oben", both: "Beide Seiten", none: "Keine Sweeps" };
+  var SIDE = { low: "Nur unten", high: "Nur oben", both: "Beide Seiten", none: "Keine Seite" };
   var SESS = [
     { key: "vt", label: "Vortag NY", color: "var(--ny)", t: "9:30" },
     { key: "asia", label: "Asien", color: "var(--asia)", t: "18:00" },
@@ -174,7 +179,7 @@
       asia: [53,50,46,42,40,41,44,48,52,55,58,59],
       london: [60,62,63,65,67,66,68,69,70,70],
       ny: [72,73,72,74,75,74,76,75,77,76,78,77],
-      why1: "Asien läuft über mehrere Kerzen weit unter das Vortagestief und kommt zurück. Um 15:30 steht der Preis weit darüber: Sweep unten. Vortageshoch und Asien-Hoch wurden auch berührt, aber der Preis steht um 15:30 darüber. Das sind Durchbrüche, die zählen nicht. Bleibt: nur unten." },
+      why1: "Asien schließt mehrere Kerzen unter dem Vortagestief, das ist zuerst ein Durchbruch. Bis 15:30 kommt der Preis aber weit darüber zurück: Fehlausbruch unten, zählt wie ein Sweep. Vortageshoch und Asien-Hoch wurden auch berührt, aber der Preis steht um 15:30 darüber. Das sind Durchbrüche, die zählen nicht. Bleibt: nur unten." },
     { title: "Beide Seiten geholt", start: 50,
       vt: [52,54,53,55,54,52,51,53,54,53],
       asia: [52,53,54,53,52,51,52,53,54,53,52,53],
@@ -186,7 +191,7 @@
       asia: [62,65,69,73,75,74,71,67,63,60,57,56],
       london: [55,53,52,50,48,49,47,46,45,45],
       ny: [43,42,43,41,40,41,39,40,38,39,37,38],
-      why1: "Asien läuft weit über das Vortageshoch und fällt zurück. Um 15:30 steht der Preis weit darunter: Sweep oben. Vortagestief und Asien-Tief wurden unterschritten und der Preis steht um 15:30 darunter: Durchbrüche. Bleibt: nur oben." },
+      why1: "Asien schließt mehrere Kerzen über dem Vortageshoch, fällt dann aber zurück. Um 15:30 steht der Preis weit darunter: Fehlausbruch oben, zählt wie ein Sweep. Vortagestief und Asien-Tief wurden unterschritten und der Preis steht um 15:30 darunter: Durchbrüche. Bleibt: nur oben." },
     { title: "Durchbruch und Sweep", start: 50,
       vt: [51,52,51,53,52,51,52,53,52,53],
       asia: [54,55,56,55,56,57,56,55,56,57,56,56],
@@ -199,12 +204,12 @@
       london: [52,51.5,51,[51,51.6,49.2],51.5,52,52.5,52,52.5,52.5],
       ny: [53.5,54,55,56,55,57,58,57,59,58,60,59],
       why1: "Eine London-Kerze sticht mit der Lunte knapp unter das Asien-Tief. Um 15:30 steht der Preis wieder darüber: Sweep unten. Das Vortagestief liegt weit tiefer und wurde nicht berührt." },
-    { title: "Sweep in Asien", start: 60,
+    { title: "Fehlausbruch in Asien", start: 60,
       vt: [59,58,57,58,57,56,57,58,57,57.5],
       asia: [57,58,59,60,61,62,61,59,58,57,58,57.5],
       london: [57.5,58,58.5,58,57.8,58.2,58.5,58,57.8,58],
       ny: [57,56.5,56,55,54,55,53,52,53,51,50,51],
-      why1: "Asien läuft über mehrere Kerzen über das Vortageshoch und fällt wieder zurück. London bleibt ruhig in der Asien-Spanne. Um 15:30 steht der Preis unter dem Vortageshoch: Sweep oben." },
+      why1: "Asien schließt mehrere Kerzen über dem Vortageshoch, das ist zuerst ein Durchbruch. Dann fällt der Preis zurück, London bleibt ruhig. Um 15:30 steht er unter dem Vortageshoch: Fehlausbruch oben, zählt wie ein Sweep." },
     { title: "Trendtag ohne Sweep", start: 50,
       vt: [51,52,51,52,53,52,51,52,53,52],
       asia: [53,54,55,56,55,56,57,56,57,58,57,58],
@@ -222,7 +227,7 @@
       asia: [57,56,55.5,56,57,58,58.5,59,58.5,58,58.5,58],
       london: [58.5,[58.6,59.9,58.2],58.5,58,57.5,58,58.5,58,57.8,58],
       ny: [57,56,55,56,54,53,54,52,51,52,50,51],
-      why1: "Asien rutscht über mehrere Kerzen unter das Vortagestief und kommt zurück: Sweep unten. London holt mit einem Docht das Asien-Hoch und schließt darunter: Sweep oben. Beide Seiten, also keiner." },
+      why1: "Asien schließt Kerzen unter dem Vortagestief und kommt zurück: Fehlausbruch unten. London holt mit einem Docht das Asien-Hoch und schließt darunter: Sweep oben. Beide Seiten, also keiner." },
     { title: "Knapper Sweep unten", start: 52,
       vt: [53,54,55,54,53,52,51,52,53,54],
       asia: [55,56,55.5,56,57,56.5,56,55.5,56,56.5,56,56],
@@ -258,13 +263,13 @@
       asia: [56,55,54,53.5,54,55,56,56.5,57,56.5,57,56.5],
       london: [56.5,56,56.5,56.2,56.6,56,56.4,56.6,56.3,56.5],
       ny: [57.5,58,59,58,60,59,61,60,62,61,63,62],
-      why1: "Asien schließt mehrere Kerzen unter dem Vortagestief und kommt danach zurück. London bleibt ruhig in der Asien-Spanne. Um 15:30 steht der Preis über dem Vortagestief: Sweep unten." },
+      why1: "Asien schließt mehrere Kerzen unter dem Vortagestief. Nach der Kerzenregel ist das zuerst ein Durchbruch. Danach kommt der Preis zurück, London bleibt ruhig. Um 15:30 steht er über dem Vortagestief: Der Durchbruch ist gescheitert, ein Fehlausbruch unten. Für den Bias zählt er wie ein Sweep." },
     { title: "Zwei Sessions, zwei Seiten", start: 50,
       vt: [51,52,53,52,51,50,51,52,51,52],
       asia: [52.5,53,53.5,54,54.5,54,53,52.5,52,52.5,53,52.5],
       london: [52,51.5,51,50.8,51.2,52,52.5,52.8,52.5,52.6],
       ny: [53.5,54,53,55,56,55,57,56,58,57,59,58],
-      why1: "Asien läuft über das Vortageshoch und fällt zurück: Sweep oben. London läuft über mehrere Kerzen unter das Asien-Tief und kommt zurück: Sweep unten. Beide Seiten, also keiner." }
+      why1: "Asien schließt Kerzen über dem Vortageshoch und fällt zurück: Fehlausbruch oben. London schließt Kerzen unter dem Asien-Tief und kommt zurück: Fehlausbruch unten. Beide Seiten, also keiner." }
   ];
 
   function blank() { return { s1: null, s2: null, s3: null, tip: false }; }
@@ -276,6 +281,16 @@
   function save() { try { localStorage.setItem("bias-lektion-v4", JSON.stringify(state)); } catch (e) {} }
 
   function price(v) { return (7480 + v * 2).toFixed(1).replace(".", ","); }
+
+
+  // Wurde ein Level zurückerobert, prüfen: nur Docht/Lunte drüber (Sweep) oder Kerzenschluss drüber (Fehlausbruch)?
+  function refine(bars, L, endIdx) {
+    if (L.kind !== "sweep" || L.touch == null) return L.kind;
+    for (var i = L.touch; i <= endIdx; i++) {
+      if (L.side === "up" ? bars[i].c > L.v : bars[i].c < L.v) return "fail";
+    }
+    return "sweep";
+  }
 
   function analyse(sc) {
     var bars = [], prev = sc.start, R = {}, n = 0;
@@ -308,12 +323,13 @@
         L.open = false; L.touch = i;
         var beyond = L.side === "up" ? close > L.v : close < L.v;
         L.kind = beyond ? "break" : "sweep";
+        L.kind = refine(bars, L, openEnd);
         events.push({ idx: i, level: L, kind: L.kind });
         break;
       }
     });
-    var lowSweep = events.some(function (e) { return e.kind === "sweep" && e.level.side === "down"; });
-    var highSweep = events.some(function (e) { return e.kind === "sweep" && e.level.side === "up"; });
+    var lowSweep = events.some(function (e) { return e.kind !== "break" && e.level.side === "down"; });
+    var highSweep = events.some(function (e) { return e.kind !== "break" && e.level.side === "up"; });
     var side = lowSweep && highSweep ? "both" : lowSweep ? "low" : highSweep ? "high" : "none";
     var dir = side === "low" ? "bull" : side === "high" ? "bear" : "none";
     var targets = levels.filter(function (L) {
@@ -420,11 +436,11 @@
         var b = bars[ev.idx], x = xc(ev.idx);
         var key = ev.idx + ev.level.side;
         var stack = used[key] || 0; used[key] = stack + 1;
-        var sweep = ev.kind === "sweep";
+        var sweep = ev.kind !== "break";
         var col = sweep ? "var(--hint)" : "var(--muted)";
         var cy = ev.level.side === "up" ? y(b.h) - 12 - stack * 18 : y(b.l) + 12 + stack * 18;
         el("circle", { cx: x, cy: cy, r: 8, fill: col }, svg);
-        el("text", { x: x, y: cy + 3.5, "text-anchor": "middle", "font-size": 10, "font-weight": 700, fill: "var(--surface)" }, svg, sweep ? "S" : "D");
+        el("text", { x: x, y: cy + 3.5, "text-anchor": "middle", "font-size": 10, "font-weight": 700, fill: "var(--surface)" }, svg, ev.kind === "sweep" ? "S" : ev.kind === "fail" ? "F" : "D");
       });
     }
 
@@ -485,8 +501,9 @@
   function eventList(a) {
     if (!a.events.length) return "<p>Berührte Level: keine.</p>";
     var items = a.events.slice().sort(function (p, q) { return p.idx - q.idx; }).map(function (e) {
-      var rel = e.level.side === "up" ? (e.kind === "sweep" ? "Kurs 15:30 darunter" : "Kurs 15:30 darüber") : (e.kind === "sweep" ? "Kurs 15:30 darüber" : "Kurs 15:30 darunter");
-      return "<li>" + e.level.name + " " + price(e.level.v) + ": " + rel + " → <b>" + (e.kind === "sweep" ? "Sweep" : "Durchbruch") + "</b></li>";
+      var back = e.kind !== "break", up = e.level.side === "up";
+      var rel = (e.kind === "fail" ? (up ? "Kerzen schlossen darüber, " : "Kerzen schlossen darunter, ") : e.kind === "sweep" ? (up ? "nur Docht darüber, " : "nur Lunte darunter, ") : "") + (up ? (back ? "Kurs 15:30 darunter" : "Kurs 15:30 darüber") : (back ? "Kurs 15:30 darüber" : "Kurs 15:30 darunter"));
+      return "<li>" + e.level.name + " " + price(e.level.v) + ": " + rel + " → <b>" + (e.kind === "sweep" ? "Sweep" : e.kind === "fail" ? "Fehlausbruch (zählt wie Sweep)" : "Durchbruch") + "</b></li>";
     });
     return '<ul style="margin:0;padding-left:1.2em;display:grid;gap:2px">' + items.join("") + "</ul>";
   }
@@ -529,10 +546,10 @@
       card.appendChild(chart);
       var lg = document.createElement("div");
       lg.className = "legend";
-      lg.innerHTML = '<span style="color:var(--open)">━ Kurs um 15:30</span><span>━ Level offen</span><span>┄ Level berührt</span>' + (marks ? '<span style="color:var(--hint)">● S = Sweep</span><span>● D = Durchbruch</span>' : '');
+      lg.innerHTML = '<span style="color:var(--open)">━ Kurs um 15:30</span><span>━ Level offen</span><span>┄ Level berührt</span>' + (marks ? '<span style="color:var(--hint)">● S = Sweep</span><span style="color:var(--hint)">● F = Fehlausbruch</span><span>● D = Durchbruch</span>' : '');
       card.appendChild(lg);
 
-      var s1 = stepBlock(1, st.s1 != null, "Auf welcher Seite liegen die Sweeps?", "Für jedes berührte Level: Steht die blaue Linie (Kurs 15:30) wieder diesseits, ist es ein Sweep. Steht sie jenseits, ein Durchbruch.");
+      var s1 = stepBlock(1, st.s1 != null, "Auf welcher Seite wurde Liquidität geholt (Sweep oder Fehlausbruch)?", "Für jedes berührte Level: Steht die blaue Linie (Kurs 15:30) jenseits, ist es ein Durchbruch und zählt nicht. Steht sie wieder diesseits, wurde die Liquidität geholt: als Sweep (nur Docht/Lunte drüber) oder als Fehlausbruch (Kerzen schlossen drüber, kamen aber zurück). Beides zählt für den Bias.");
       s1.appendChild(choiceRow(idx, "s1", [
         { v: "low", t: SIDE.low }, { v: "high", t: SIDE.high }, { v: "both", t: SIDE.both }, { v: "none", t: SIDE.none }
       ], st.s1, a.side, function (v) { state[idx].s1 = v; save(); render(); }, "Frage 1"));
