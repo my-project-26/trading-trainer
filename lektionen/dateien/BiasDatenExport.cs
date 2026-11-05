@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using cAlgo.API;
 
@@ -52,9 +51,9 @@ namespace cAlgo.Robots
                     Print("Hinweis: Broker liefert Daten erst ab {0:yyyy-MM-dd}. Exportiert wird ab dort.", bars.OpenTimes[0]);
 
                 string folder = string.IsNullOrWhiteSpace(TargetFolder)
-                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BiasTrainer")
+                    ? System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BiasTrainer")
                     : TargetFolder.Trim();
-                Directory.CreateDirectory(folder);
+                System.IO.Directory.CreateDirectory(folder);
 
                 var inv = CultureInfo.InvariantCulture;
                 var sb = new StringBuilder();
@@ -86,9 +85,9 @@ namespace cAlgo.Robots
                 string safeSymbol = ExportSymbol.Replace(" ", "").Replace("/", "");
                 string fileName = string.Format(inv, "{0}_{1}_{2:yyyyMMdd}_{3:yyyyMMdd}.csv",
                     safeSymbol, ExportTimeFrame, first, last);
-                string path = Path.Combine(folder, fileName);
+                string path = System.IO.Path.Combine(folder, fileName);
 
-                File.WriteAllText(path, sb.ToString(), new UTF8Encoding(false));
+                System.IO.File.WriteAllText(path, sb.ToString(), new UTF8Encoding(false));
 
                 Print("Fertig: {0} Kerzen von {1:yyyy-MM-dd HH:mm} bis {2:yyyy-MM-dd HH:mm} (NY-Zeit).", count, first, last);
                 Print("Datei: {0}", path);
