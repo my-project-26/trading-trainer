@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Backtest: 100 Setups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lektion.css">
+<style>
+  .wrap { max-width: 980px; }
+  .wrap > *, section > * { min-width: 0; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+  .bar label { display: flex; align-items: center; gap: 8px; font-size: 0.92rem; color: var(--muted); }
+  select, input[type=text], input[type=number], textarea { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+  select, input, textarea { box-sizing: border-box; max-width: 100%; }
+  textarea { width: 100%; min-height: 60px; resize: vertical; }
+  .phase > .btn, .card > .btn { justify-self: start; }
+  .btn { font: inherit; font-weight: 600; font-size: 0.95rem; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--fg); background: var(--fg); color: var(--surface); cursor: pointer; }
+  .btn.ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+  .btn.small { padding: 6px 11px; font-size: 0.86rem; }
+  .btn:disabled { opacity: 0.4; cursor: default; }
+  .btn:focus-visible, select:focus-visible, input:focus-visible, .seg button:focus-visible { outline: 2px solid var(--open); outline-offset: 2px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; }
+  .card h2 { font-size: 1.3rem; }
+  .phase { display: grid; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .phase:first-of-type { border-top: 0; padding-top: 0; }
+  .ph { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .ph .n { font-family: var(--font-mono); font-size: 0.85rem; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); flex: none; }
+  .ph .n.on { background: var(--fg); color: var(--surface); border-color: var(--fg); }
+  .ph b { font-family: var(--font-display); font-size: 1.1rem; }
+  .ph small { color: var(--muted); }
+  .chart { margin: 0; overflow: hidden; }
+  .chart svg { min-width: 0; touch-action: pan-y; }
+  .readout { font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); min-height: 1.3em; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 14px; }
+  .f { display: grid; gap: 4px; font-size: 0.88rem; color: var(--muted); min-width: 0; }
+  .f > span { font-weight: 500; }
+  .f select, .f input { width: 100%; }
+  .seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .seg button { font: inherit; font-size: 0.9rem; font-weight: 600; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: var(--surface); border-color: var(--fg); }
+  .seg.bias button[data-v="bull"][aria-pressed="true"] { background: var(--bull); border-color: var(--bull); }
+  .seg.bias button[data-v="bear"][aria-pressed="true"] { background: var(--bear); border-color: var(--bear); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .now { font-family: var(--font-mono); font-size: 0.9rem; }
+  .now b { font-weight: 500; color: var(--open); }
+  .crv { font-family: var(--font-mono); font-size: 0.95rem; }
+  .crv.bad { color: var(--bear); }
+  .res { border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; }
+  .res.win { background: var(--bull-bg); }
+  .res.loss { background: var(--bear-bg); }
+  .res.flat { background: var(--none-bg); }
+  .res b.big { font-family: var(--font-display); font-size: 1.4rem; }
+  .err { color: var(--bear); font-size: 0.9rem; }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .kpis div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 2px; }
+  .kpis b { font-family: var(--font-display); font-size: 1.35rem; }
+  .kpis span { font-size: 0.82rem; color: var(--muted); }
+  .few td { color: var(--muted); }
+  .pos { color: var(--bull); } .neg { color: var(--bear); }
+  .hint { font-size: 0.88rem; color: var(--muted); }
+  .hidden { display: none !important; }
+  details summary { cursor: pointer; font-weight: 600; }
+  @media (max-width: 700px) {
+    .grid2, .grid3 { grid-template-columns: 1fr 1fr; }
+    .kpis { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section>
+    <span class="eyebrow">Phase 2 · Backtest</span>
+    <h1>100 Setups an echten Tagen</h1>
+    <p class="lead">Deine eigenen cTrader-Daten, Tag für Tag. Du siehst nur, was bis zum aktuellen Zeitpunkt passiert ist, und entscheidest wie live. Am Ende zeigt die Auswertung, welche Merkmale deine Gewinner gemeinsam haben.</p>
+    <ol class="steps">
+      <li><div><h3>Bis 15:30: Bias festhalten</h3><p>Du siehst Vortag, Asien und London im 15-Minuten-Chart. Bestimme Bias und Ziel und halte beides fest, bevor du weiterspielst.</p></div></li>
+      <li><div><h3>Ab 15:30: Kerze für Kerze</h3><p>Im 5-Minuten-Chart schaltest du jede Kerze selbst frei. Kommt das komplette Setup (Sweep, BOS/IFVG, Rücklauf ins FVG/EQ), trägst du den Einstieg ein. Bis 16:30 kein Setup: kein Trade.</p></div></li>
+      <li><div><h3>Ergebnis und Auswertung</h3><p>Die Seite spielt den Trade bis Ziel, Stop oder 18:00 ab und rechnet das Ergebnis in R. Nach 100 Setups vergleichst du die Merkmale.</p></div></li>
+    </ol>
+  </section>
+
+  <div class="bar">
+    <label>Index
+      <select id="symsel">
+        <option value="ES">US 500</option>
+        <option value="NQ">US TECH 100</option>
+        <option value="alt">abwechselnd</option>
+      </select>
+    </label>
+    <span class="score" id="progress"></span>
+  </div>
+
+  <div class="card" id="day"><p class="hint">Daten werden geladen …</p></div>
+
+  <section id="eval">
+    <span class="eyebrow">Auswertung</span>
+    <h2>Deine Zahlen</h2>
+    <div id="evalbody"><p class="hint">Noch keine Trades.</p></div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Journal</span>
+    <h2>Alle Tage</h2>
+    <div class="tablewrap" id="journal"></div>
+    <div class="row">
+      <button class="btn ghost small" type="button" id="csv">Als CSV herunterladen</button>
+      <button class="btn ghost small" type="button" id="jsonout">Sicherung (JSON) herunterladen</button>
+      <label class="btn ghost small" style="cursor:pointer">Sicherung laden<input type="file" id="jsonin" accept="application/json" class="hidden"></label>
+      <button class="btn ghost small" type="button" id="wipe">Alles löschen</button>
+    </div>
+    <p class="hint">Die Einträge liegen nur in diesem Browser. Lade ab und zu eine Sicherung herunter, dann kannst du sie auf einem anderen Gerät wieder laden.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "backtest-v1";
+  var S = { sym: "ES", recs: [], order: null, cur: null };
+  try { var sv = JSON.parse(localStorage.getItem(KEY) || "null"); if (sv && Array.isArray(sv.recs)) S = Object.assign(S, sv); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  var DATA = null;
+  var NAME = { ES: "US 500", NQ: "US TECH 100" };
+  var $ = function (id) { return document.getElementById(id); };
+  var de = function (v, d) { return (v == null || isNaN(v)) ? "–" : Number(v).toLocaleString("de-DE", { minimumFractionDigits: d == null ? 1 : d, maximumFractionDigits: d == null ? 1 : d }); };
+  var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+  function num(v) { if (typeof v === "number") return v; var s = String(v).trim(); if (s.indexOf(",") >= 0) s = s.replace(/\./g, "").replace(",", "."); return parseFloat(s); }
+
+  // Zeiten: n5 startet 08:30 NY, 5-Min-Schritte. Abstand zu Deutschland: 6 h, in der Umstellungswoche Ende Okt. 5 h
+  function gap(d) { return (d >= "2026-10-25" && d <= "2026-10-31") ? 5 : 6; }
+  function hm(min) { var h = Math.floor(min / 60) % 24, m = min % 60; return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m; }
+  function t5(i, d) { var ny = 8 * 60 + 30 + i * 5; return { ny: hm(ny), de: hm(ny + gap(d) * 60) }; }
+  function dateDE(s) { var p = s.split("-"); var w = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"][new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay()]; return w + " " + p[2] + "." + p[1] + "." + p[0]; }
+
+  var OPEN_IDX = 12;      // erste Kerze 09:30 NY
+  var LAST_ENTRY = 24;    // Einstieg spätestens mit Stand 10:30 NY (16:30 DE)
+
+  /* ---------- Chart ---------- */
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, a, p, txt) { var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; if (p) p.appendChild(e); return e; }
+  function lvColor(n) { return n.indexOf("Asien") === 0 ? "var(--asia)" : n.indexOf("London") === 0 ? "var(--london)" : "var(--ny)"; }
+  function lvTag(L) { return L.n.replace("-Hoch", " H").replace("-Tief", " T") + " " + de(L.v); }
+
+  function drawChart(host, o) {
+    // o: bars, n (sichtbar), slots, bands, levels [{v,label,col,from,dash}], trade, xl [{i,t}], marks, readout
+    host.innerHTML = "";
+    var W = 900, H = o.h || 330, pl = 8, pr = 128, pt = 14, pb = 26;
+    var bars = o.bars.slice(0, o.n);
+    var slots = o.slots || o.bars.length;
+    var lo = Infinity, hi = -Infinity;
+    bars.forEach(function (b) { lo = Math.min(lo, b[2]); hi = Math.max(hi, b[1]); });
+    if (o.trade) [o.trade.entry, o.trade.stop, o.trade.target].forEach(function (v) { if (v != null && !isNaN(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } });
+    var span = Math.max(hi - lo, 1e-6);
+    var near = (o.levels || []).filter(function (L) { return L.v >= lo - span * 0.5 && L.v <= hi + span * 0.5; });
+    near.forEach(function (L) { lo = Math.min(lo, L.v); hi = Math.max(hi, L.v); });
+    var pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+    var sw = (W - pl - pr) / slots;
+    var X = function (i) { return pl + sw * (i + 0.5); };
+    var Y = function (p) { return pt + (hi - p) / (hi - lo) * (H - pt - pb); };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": o.alt || "Chart" }, host);
+    (o.bands || []).forEach(function (b) {
+      el("rect", { x: pl + sw * b.from, y: 0, width: sw * (b.to - b.from), height: H - pb + 4, fill: b.col, opacity: 0.09 }, svg);
+      el("text", { x: pl + sw * b.from + 6, y: H - 8, "font-size": 11, fill: b.col }, svg, b.t);
+    });
+    if (o.vline != null) el("line", { x1: pl + sw * o.vline, x2: pl + sw * o.vline, y1: 0, y2: H - pb, stroke: "var(--open)", "stroke-dasharray": "3 4", "stroke-width": 1.2 }, svg);
+    // Levels
+    var labs = [];
+    near.forEach(function (L) {
+      var y = Y(L.v), x0 = L.from != null ? pl + sw * L.from : pl;
+      el("line", { x1: x0, x2: W - pr, y1: y, y2: y, stroke: L.col, "stroke-width": 1.3, "stroke-dasharray": L.dash || "" }, svg);
+      labs.push({ y: y, t: L.label, col: L.col });
+    });
+    var far = (o.levels || []).filter(function (L) { return near.indexOf(L) < 0; });
+    // Trade-Linien
+    if (o.trade) {
+      var tr = o.trade, x0 = X(tr.i) - sw / 2;
+      [["target", "var(--bull)", "Ziel"], ["entry", "var(--fg)", "Einstieg"], ["stop", "var(--bear)", "Stop"]].forEach(function (k) {
+        var v = tr[k[0]]; if (v == null || isNaN(v)) return;
+        el("line", { x1: x0, x2: W - pr, y1: Y(v), y2: Y(v), stroke: k[1], "stroke-width": 1.8, "stroke-dasharray": k[0] === "entry" ? "" : "6 3" }, svg);
+        labs.push({ y: Y(v), t: k[2] + " " + de(v), col: k[1], bold: true });
+      });
+    }
+    // Kerzen
+    var bw = Math.max(2, Math.min(sw * 0.62, 14));
+    bars.forEach(function (b, i) {
+      var x = X(i), up = b[3] >= b[0];
+      el("line", { x1: x, x2: x, y1: Y(b[1]), y2: Y(b[2]), stroke: "var(--fg)", "stroke-width": 1 }, svg);
+      var top = Y(Math.max(b[0], b[3])), bot = Y(Math.min(b[0], b[3]));
+      el("rect", { x: x - bw / 2, y: top, width: bw, height: Math.max(1.2, bot - top), fill: up ? "var(--surface)" : "var(--fg)", stroke: "var(--fg)", "stroke-width": 1 }, svg);
+    });
+    if (o.hl != null && o.hl < bars.length) {
+      var hb = bars[o.hl];
+      el("rect", { x: X(o.hl) - bw / 2 - 3, y: Y(hb[1]) - 3, width: bw + 6, height: Y(hb[2]) - Y(hb[1]) + 6, fill: "none", stroke: "var(--hint)", "stroke-width": 1.6, rx: 3 }, svg);
+    }
+    (o.marks || []).forEach(function (m) {
+      el("circle", { cx: X(m.i), cy: Y(m.v), r: 6, fill: "none", stroke: m.col, "stroke-width": 2.4 }, svg);
+    });
+    // rechte Beschriftungen ohne Überlappung
+    labs.sort(function (a, b) { return a.y - b.y; });
+    labs.forEach(function (l, k) { l.py = l.y; if (k && l.py < labs[k - 1].py + 13) l.py = labs[k - 1].py + 13; });
+    var over = labs.length ? labs[labs.length - 1].py - (H - pb) : 0;
+    if (over > 0) for (var k = labs.length - 1; k >= 0; k--) { labs[k].py -= over; if (k && labs[k - 1].py > labs[k].py - 13) labs[k - 1].py = labs[k].py - 13; else break; }
+    labs.forEach(function (l) { el("text", { x: W - pr + 6, y: l.py + 4, "font-size": 11.5, fill: l.col, "font-weight": l.bold ? 600 : 400 }, svg, l.t); });
+    // Levels außerhalb
+    var ups = far.filter(function (L) { return L.v > hi; }), dns = far.filter(function (L) { return L.v < lo; });
+    if (ups.length) el("text", { x: W - pr + 6, y: 11, "font-size": 10.5, fill: "var(--muted)" }, svg, "↑ " + ups.map(function (L) { return L.short; }).join(", "));
+    if (dns.length) el("text", { x: W - pr + 6, y: H - pb - 2, "font-size": 10.5, fill: "var(--muted)" }, svg, "↓ " + dns.map(function (L) { return L.short; }).join(", "));
+    (o.xl || []).forEach(function (x) { if (x.i < slots) el("text", { x: x.i === 0 ? pl : X(x.i), y: H - 8, "font-size": 11, fill: "var(--muted)", "text-anchor": x.i === 0 ? "start" : "middle" }, svg, x.t); });
+    // Ablesen
+    if (o.readout) {
+      var ov = el("rect", { x: pl, y: 0, width: W - pl - pr, height: H, fill: "transparent" }, svg);
+      var show = function (ev) {
+        var r = svg.getBoundingClientRect(); var x = (ev.clientX - r.left) / r.width * W;
+        var i = Math.floor((x - pl) / sw); if (i < 0 || i >= bars.length) return;
+        var b = bars[i]; o.readout(i, b);
+      };
+      ov.addEventListener("pointermove", show); ov.addEventListener("click", show);
+    }
+    return svg;
+  }
+
+  /* ---------- Tag ---------- */
+  function dates() { return DATA.ES.map(function (x) { return x.d; }); }
+  function dayOf(sym, d) { var a = DATA[sym]; for (var i = 0; i < a.length; i++) if (a[i].d === d) return a[i]; return null; }
+  function used() { var u = {}; S.recs.forEach(function (r) { u[r.d] = 1; }); if (S.cur) u[S.cur.d] = 1; return u; }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function nextDay() {
+    if (!S.order || S.order.length !== dates().length) S.order = shuffle(dates().slice());
+    var u = used(), d = null;
+    for (var i = 0; i < S.order.length; i++) if (!u[S.order[i]]) { d = S.order[i]; break; }
+    if (!d) { S.cur = null; save(); render(); return; }
+    var sym = S.sym === "alt" ? (S.recs.length % 2 ? "NQ" : "ES") : S.sym;
+    S.cur = { sym: sym, d: d, phase: 1, n: OPEN_IDX, bias: null, tgt: "", note: "", smt: false, form: null };
+    save(); render();
+  }
+
+  function levelsFor(day, opts) {
+    var r = day.r, ends = [r[0], r[0] + r[1], r[0] + r[1] + r[2]];
+    return day.lv.map(function (L, i) {
+      var sess = L.n.indexOf("Vortag") === 0 ? 0 : L.n.indexOf("Asien") === 0 ? 1 : 2;
+      return { v: L.v, label: lvTag(L), short: lvTag(L), col: lvColor(L.n), from: opts && opts.n15 ? ends[sess] : null, idx: i, s: L.s, n: L.n };
+    });
+  }
+
+  function phase1(card, day, c) {
+    var ph = document.createElement("div"); ph.className = "phase";
+    ph.innerHTML = '<div class="ph"><span class="n ' + (c.phase === 1 ? "on" : "") + '">1</span><b>Bis 15:30: Bias</b><small>15-Minuten-Chart · Vortag, Asien, London</small></div>';
+    var ch = document.createElement("div"); ch.className = "chart"; ph.appendChild(ch);
+    var ro = document.createElement("div"); ro.className = "readout"; ph.appendChild(ro);
+    var r = day.r, n = day.n15.length;
+    var xl = [{ i: 0, t: "Vortag 15:30" }, { i: r[0], t: "Asien 00:00" }, { i: r[0] + r[1], t: "London 09:00" }];
+    drawChart(ch, {
+      bars: day.n15, n: n, slots: n + 2, h: 300,
+      bands: [{ from: 0, to: r[0], col: "var(--ny)", t: "" }, { from: r[0], to: r[0] + r[1], col: "var(--asia)", t: "" }, { from: r[0] + r[1], to: n, col: "var(--london)", t: "" }],
+      levels: levelsFor(day, { n15: 1 }), xl: xl, vline: n,
+      readout: function (i, b) { ro.textContent = "O " + de(b[0]) + " · H " + de(b[1]) + " · L " + de(b[2]) + " · C " + de(b[3]); },
+      alt: "15-Minuten-Chart bis 15:30"
+    });
+    ro.textContent = "Kurs um 15:30: " + de(day.c) + " · Tippe auf eine Kerze für ihre Werte.";
+    var locked = c.phase > 1;
+    var f = document.createElement("div"); f.className = "grid2";
+    var biasSeg = '<div class="f"><span>Bias</span><div class="seg bias" id="biasseg">' +
+      [["bull", "Bullisch"], ["bear", "Bärisch"], ["none", "Keiner"]].map(function (x) { return '<button type="button" data-v="' + x[0] + '" aria-pressed="' + (c.bias === x[0]) + '"' + (locked ? " disabled" : "") + ">" + x[1] + "</button>"; }).join("") + "</div></div>";
+    var opts = '<option value="">– kein Ziel –</option>' + day.lv.map(function (L, i) { return '<option value="' + i + '"' + (String(c.tgt) === String(i) ? " selected" : "") + ">" + esc(L.n) + " " + de(L.v) + "</option>"; }).join("");
+    f.innerHTML = biasSeg + '<label class="f"><span>Erstes Ziel</span><select id="tgtsel"' + (locked ? " disabled" : "") + ">" + opts + "</select></label>" +
+      '<label class="f" style="grid-column:1/-1"><span>Notiz vor 15:30 (welche Levels geholt, warum)</span><textarea id="note1"' + (locked ? " disabled" : "") + ">" + esc(c.note || "") + "</textarea></label>";
+    ph.appendChild(f);
+    if (!locked) {
+      var b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = "Bias festhalten und 15:30 starten";
+      b.disabled = !c.bias;
+      ph.appendChild(b);
+      f.querySelectorAll("#biasseg button").forEach(function (x) { x.addEventListener("click", function () { c.bias = x.dataset.v; save(); render(); }); });
+      f.querySelector("#tgtsel").addEventListener("change", function (e) { c.tgt = e.target.value; save(); });
+      f.querySelector("#note1").addEventListener("input", function (e) { c.note = e.target.value; save(); });
+      b.addEventListener("click", function () { c.phase = 2; save(); render(); });
+    } else {
+      var rb = day.rb === "bull" ? "bullisch" : day.rb === "bear" ? "bärisch" : "keiner";
+      var mine = c.bias === "bull" ? "bullisch" : c.bias === "bear" ? "bärisch" : "keiner";
+      var same = (c.bias === "none" ? null : c.bias) === day.rb;
+      var p = document.createElement("p");
+      p.innerHTML = '<span class="pill ' + (same ? "ok" : "neutral") + '">Dein Bias: ' + mine + " · Regel: " + rb + (day.rt != null ? " (Ziel " + esc(day.lv[day.rt].n) + ")" : "") + "</span>";
+      ph.appendChild(p);
+    }
+    card.appendChild(ph);
+  }
+
+  function sweepExtreme(day, n, dir) {
+    var bs = day.n5.slice(OPEN_IDX, n); if (!bs.length) return null;
+    return dir === "long" ? Math.min.apply(null, bs.map(function (b) { return b[2]; })) - 0.5 : Math.max.apply(null, bs.map(function (b) { return b[1]; })) + 0.5;
+  }
+
+  function phase2(card, day, c) {
+    var other = dayOf(c.sym === "ES" ? "NQ" : "ES", c.d);
+    var ph = document.createElement("div"); ph.className = "phase";
+    var done = c.phase >= 3;
+    var t = t5(c.n, c.d);
+    ph.innerHTML = '<div class="ph"><span class="n ' + (c.phase === 2 ? "on" : "") + '">2</span><b>Ab 15:30: Kerze für Kerze</b><small>5-Minuten-Chart · ' + NAME[c.sym] + "</small></div>";
+    var now = document.createElement("p"); now.className = "now";
+    now.innerHTML = done ? "Tag abgeschlossen. Unten siehst du den Verlauf bis 18:00." : "Stand: <b>" + t.de + "</b> DE (" + t.ny + " NY) · " + (c.n <= OPEN_IDX ? "Eröffnung steht bevor" : c.n <= 16 ? "Manipulation (bis 15:50)" : c.n <= 20 ? "Einstiegsfenster (bis 16:10)" : c.n <= LAST_ENTRY ? "Letzte Chance (bis 16:30)" : "Kein neuer Trade mehr");
+    ph.appendChild(now);
+    var ch = document.createElement("div"); ch.className = "chart"; ph.appendChild(ch);
+    var ro = document.createElement("div"); ro.className = "readout"; ph.appendChild(ro);
+    var shown = done ? day.n5.length : c.n;
+    var xl = []; for (var i = 0; i <= 42; i += 6) { var tt = t5(i, c.d); xl.push({ i: i, t: tt.de }); }
+    var trade = c.trade ? { i: c.trade.i, entry: c.trade.entry, stop: c.trade.stop, target: c.trade.target } : (c.form && c.form.entry != null ? { i: c.n - 1, entry: num(c.form.entry), stop: num(c.form.stop), target: num(c.form.target) } : null);
+    var marks = c.trade && c.trade.exitI != null ? [{ i: c.trade.exitI, v: c.trade.exitPx, col: c.trade.R > 0 ? "var(--bull)" : "var(--bear)" }] : [];
+    var lv = levelsFor(day);
+    drawChart(ch, {
+      bars: day.n5, n: shown, slots: 42, h: 340, levels: lv, xl: xl, vline: OPEN_IDX, trade: trade, marks: marks,
+      hl: done ? null : shown - 1,
+      readout: function (i, b) { var tt = t5(i, c.d); ro.textContent = tt.de + " DE · O " + de(b[0]) + " · H " + de(b[1]) + " · L " + de(b[2]) + " · C " + de(b[3]); },
+      alt: "5-Minuten-Chart ab 14:30"
+    });
+    var last = day.n5[shown - 1], lt = t5(shown - 1, c.d);
+    ro.textContent = "Letzte Kerze " + lt.de + " · O " + de(last[0]) + " · H " + de(last[1]) + " · L " + de(last[2]) + " · C " + de(last[3]);
+    // SMT
+    var smtRow = document.createElement("div"); smtRow.className = "row";
+    var smtBtn = document.createElement("button"); smtBtn.type = "button"; smtBtn.className = "btn ghost small";
+    var oname = c.sym === "ES" ? "US TECH 100" : "US 500";
+    smtBtn.textContent = c.smt ? oname + " ausblenden" : "Zum SMT-Vergleich " + oname + " einblenden";
+    smtBtn.addEventListener("click", function () { c.smt = !c.smt; save(); render(); });
+    smtRow.appendChild(smtBtn); ph.appendChild(smtRow);
+    if (c.smt && other) {
+      var ch2 = document.createElement("div"); ch2.className = "chart"; ph.appendChild(ch2);
+      drawChart(ch2, { bars: other.n5, n: shown, slots: 42, h: 220, levels: levelsFor(other), xl: xl, vline: OPEN_IDX, alt: "Vergleichsindex" });
+    }
+    if (!done && !c.trade) {
+      var ctrl = document.createElement("div"); ctrl.className = "row";
+      var b1 = mk("btn", "+1 Kerze"), b3 = mk("btn ghost", "+3 Kerzen"), be = mk("btn ghost", "Einstieg jetzt"), bn = mk("btn ghost", "Kein Setup bis 16:30");
+      b1.disabled = c.n >= 42; b3.disabled = c.n >= 40;
+      be.disabled = c.n <= OPEN_IDX || c.n > LAST_ENTRY || !!c.form;
+      [b1, b3, be, bn].forEach(function (b) { ctrl.appendChild(b); });
+      b1.addEventListener("click", function () { c.n = Math.min(42, c.n + 1); save(); render(); });
+      b3.addEventListener("click", function () { c.n = Math.min(42, c.n + 3); save(); render(); });
+      be.addEventListener("click", function () {
+        var dir = c.bias === "bear" ? "short" : "long";
+        c.form = { dir: dir, lvl: "", sk: "", conf: "", cont: "", smt: "", grade: "", entry: day.n5[c.n - 1][3], stop: "", target: "" };
+        save(); render();
+      });
+      bn.addEventListener("click", function () { finish(day, c, null); });
+      ph.appendChild(ctrl);
+      if (c.n > LAST_ENTRY && !c.form) { var h = document.createElement("p"); h.className = "hint"; h.textContent = "16:30 ist vorbei. Ohne Setup wird heute nicht gehandelt."; ph.appendChild(h); }
+      if (c.form) ph.appendChild(entryForm(day, c));
+    }
+    card.appendChild(ph);
+  }
+  function mk(cls, t) { var b = document.createElement("button"); b.type = "button"; b.className = cls; b.textContent = t; return b; }
+
+  function entryForm(day, c) {
+    var F = c.form, box = document.createElement("div"); box.className = "card"; box.style.background = "var(--bg)";
+    var segs = function (key, opts) { return '<div class="seg" data-k="' + key + '">' + opts.map(function (o) { return '<button type="button" data-v="' + o[0] + '" aria-pressed="' + (F[key] === o[0]) + '">' + o[1] + "</button>"; }).join("") + "</div>"; };
+    var lvOpts = '<option value="">– wählen –</option>' + day.lv.map(function (L) { return '<option' + (F.lvl === L.n ? " selected" : "") + ">" + esc(L.n) + "</option>"; }).join("") + '<option' + (F.lvl === "anderes Hoch/Tief" ? " selected" : "") + ">anderes Hoch/Tief</option>";
+    box.innerHTML = '<h3>Einstieg um ' + t5(c.n, c.d).de + ' · Merkmale vor dem Ergebnis eintragen</h3>' +
+      '<div class="f"><span>Richtung</span>' + segs("dir", [["long", "Long"], ["short", "Short"]]) + "</div>" +
+      '<div class="grid2"><label class="f"><span>1 · Gesweeptes Level</span><select data-i="lvl">' + lvOpts + "</select></label>" +
+      '<div class="f"><span>Art</span>' + segs("sk", [["S", "Sweep"], ["F", "Fehlausbruch"]]) + "</div>" +
+      '<div class="f"><span>2 · Bestätigung</span>' + segs("conf", [["BOS", "BOS"], ["IFVG", "IFVG"], ["beides", "beides"]]) + "</div>" +
+      '<div class="f"><span>3 · Fortsetzung</span>' + segs("cont", [["FVG", "FVG"], ["EQ", "EQ"], ["beides", "beides"]]) + "</div>" +
+      '<div class="f"><span>SMT am Level</span>' + segs("smt", [["ja", "ja"], ["nein", "nein"], ["–", "nicht geprüft"]]) + "</div>" +
+      '<div class="f"><span>Deine Note</span>' + segs("grade", [["A", "A · alles sauber"], ["B", "B · Zweifel"]]) + "</div></div>" +
+      '<div class="grid3"><label class="f"><span>Einstieg</span><input type="text" inputmode="decimal" data-i="entry" value="' + de(num(F.entry)) + '"></label>' +
+      '<label class="f"><span>Stop</span><input type="text" inputmode="decimal" data-i="stop" value="' + (F.stop === "" ? "" : de(num(F.stop))) + '"></label>' +
+      '<label class="f"><span>4 · Ziel</span><input type="text" inputmode="decimal" data-i="target" value="' + (F.target === "" ? "" : de(num(F.target))) + '"></label></div>' +
+      '<div class="row" id="helpers"></div><p class="crv" id="crv"></p><p class="err" id="ferr"></p>' +
+      '<div class="row"><button class="btn" type="button" id="go">Trade starten</button><button class="btn ghost" type="button" id="cancel">Abbrechen</button></div>';
+    box.querySelectorAll(".seg").forEach(function (sg) {
+      sg.querySelectorAll("button").forEach(function (b) { b.addEventListener("click", function () { F[sg.dataset.k] = b.dataset.v; save(); render(); }); });
+    });
+    box.querySelectorAll("[data-i]").forEach(function (inp) {
+      var ev = inp.tagName === "SELECT" ? "change" : "input";
+      inp.addEventListener(ev, function () { F[inp.dataset.i] = inp.tagName === "SELECT" ? inp.value : inp.value; save(); upd(); });
+      if (inp.tagName !== "SELECT") inp.addEventListener("change", function () { render(); });
+    });
+    var helpers = box.querySelector("#helpers");
+    var se = sweepExtreme(day, c.n, F.dir);
+    if (se != null) { var hb = mk("btn ghost small", "Stop = Sweep-Extrem " + de(se)); hb.addEventListener("click", function () { F.stop = se; save(); render(); }); helpers.appendChild(hb); }
+    var e0 = num(F.entry);
+    day.lv.filter(function (L) { return F.dir === "long" ? L.v > e0 : L.v < e0; }).sort(function (a, b) { return Math.abs(a.v - e0) - Math.abs(b.v - e0); }).slice(0, 3).forEach(function (L) {
+      var tb = mk("btn ghost small", "Ziel = " + L.n + " " + de(L.v)); tb.addEventListener("click", function () { F.target = L.v; save(); render(); }); helpers.appendChild(tb);
+    });
+    function upd() {
+      var e = num(F.entry), s = num(F.stop), t = num(F.target), out = box.querySelector("#crv");
+      if ([e, s, t].some(isNaN)) { out.textContent = "CRV: –"; out.className = "crv"; return; }
+      var risk = F.dir === "long" ? e - s : s - e, rew = F.dir === "long" ? t - e : e - t;
+      if (risk <= 0 || rew <= 0) { out.textContent = "Stop und Ziel liegen auf der falschen Seite."; out.className = "crv bad"; return; }
+      out.textContent = "Risiko " + de(risk) + " Pkt · Chance " + de(rew) + " Pkt · CRV 1 : " + de(rew / risk, 2);
+      out.className = "crv" + (rew / risk < 1 ? " bad" : "");
+    }
+    upd();
+    box.querySelector("#cancel").addEventListener("click", function () { c.form = null; save(); render(); });
+    box.querySelector("#go").addEventListener("click", function () {
+      var e = num(F.entry), s = num(F.stop), t = num(F.target), err = box.querySelector("#ferr");
+      var miss = ["lvl", "sk", "conf", "cont", "smt", "grade"].filter(function (k) { return !F[k]; });
+      if (miss.length) { err.textContent = "Bitte alle Merkmale ausfüllen. Sie müssen vor dem Ergebnis feststehen."; return; }
+      if ([e, s, t].some(isNaN)) { err.textContent = "Einstieg, Stop und Ziel als Zahl eintragen."; return; }
+      var risk = F.dir === "long" ? e - s : s - e, rew = F.dir === "long" ? t - e : e - t;
+      if (risk <= 0 || rew <= 0) { err.textContent = "Stop und Ziel liegen auf der falschen Seite des Einstiegs."; return; }
+      simulate(day, c, e, s, t);
+    });
+    return box;
+  }
+
+  function simulate(day, c, e, s, t) {
+    var F = c.form, long = F.dir === "long", risk = long ? e - s : s - e;
+    var res = null;
+    for (var i = c.n; i < day.n5.length; i++) {
+      var b = day.n5[i];
+      var hitS = long ? b[2] <= s : b[1] >= s, hitT = long ? b[1] >= t : b[2] <= t;
+      if (hitS) { res = { out: "loss", exitI: i, exitPx: s, R: -1, amb: hitT }; break; }
+      if (hitT) { res = { out: "win", exitI: i, exitPx: t, R: (long ? t - e : e - t) / risk }; break; }
+    }
+    if (!res) { var lb = day.n5[day.n5.length - 1]; res = { out: "time", exitI: day.n5.length - 1, exitPx: lb[3], R: (long ? lb[3] - e : e - lb[3]) / risk }; }
+    c.trade = Object.assign({ i: c.n - 1, entry: e, stop: s, target: t }, res);
+    finish(day, c, c.trade);
+  }
+
+  function finish(day, c, tr) {
+    var F = c.form || {};
+    var rec = { sym: c.sym, d: c.d, bias: c.bias, tgt: c.tgt === "" ? null : day.lv[+c.tgt].n, note: c.note || "", rb: day.rb, ts: Date.now() };
+    if (tr) {
+      Object.assign(rec, {
+        nt: false, dir: F.dir, lvl: F.lvl, sk: F.sk, conf: F.conf, cont: F.cont, smt: F.smt, grade: F.grade,
+        entry: tr.entry, stop: tr.stop, target: tr.target, crv: Math.abs(tr.target - tr.entry) / Math.abs(tr.entry - tr.stop),
+        ei: tr.i + 1, xi: tr.exitI, xp: tr.exitPx, R: Math.round(tr.R * 100) / 100, out: tr.out, amb: !!tr.amb
+      });
+    } else rec.nt = true;
+    S.recs.push(rec);
+    c.phase = 3; c.rec = rec;
+    save(); render();
+  }
+
+  function phase3(card, day, c) {
+    var ph = document.createElement("div"); ph.className = "phase";
+    ph.innerHTML = '<div class="ph"><span class="n on">3</span><b>Ergebnis</b></div>';
+    var r = c.rec, box = document.createElement("div");
+    if (r.nt) {
+      box.className = "res flat";
+      box.innerHTML = "<b class='big'>Kein Trade</b><span>Kein komplettes Setup bis 16:30. Schau dir im Chart oben an, was danach passiert ist, und notiere, ob du etwas übersehen hast.</span>";
+    } else {
+      box.className = "res " + (r.R > 0 ? "win" : r.R < 0 ? "loss" : "flat");
+      var how = r.out === "win" ? "Ziel erreicht um " + t5(r.xi, r.d).de : r.out === "loss" ? "Stop erreicht um " + t5(r.xi, r.d).de + (r.amb ? " (Ziel und Stop in derselben Kerze, gewertet als Stop)" : "") : "Weder Ziel noch Stop bis 18:00, geschlossen bei " + de(r.xp);
+      box.innerHTML = "<b class='big'>" + (r.R > 0 ? "+" : "") + de(r.R, 2) + " R</b><span>" + how + " · CRV 1 : " + de(r.crv, 2) + " · " + (r.dir === "long" ? "Long" : "Short") + " · Note " + r.grade + "</span>";
+    }
+    ph.appendChild(box);
+    var nt = document.createElement("label"); nt.className = "f";
+    nt.innerHTML = "<span>Notiz nach dem Trade (was hast du gelernt?)</span><textarea>" + esc(r.after || "") + "</textarea>";
+    nt.querySelector("textarea").addEventListener("input", function (e) { r.after = e.target.value; save(); });
+    ph.appendChild(nt);
+    var nb = mk("btn", "Nächster Tag"); nb.addEventListener("click", nextDay); ph.appendChild(nb);
+    card.appendChild(ph);
+  }
+
+  /* ---------- Auswertung ---------- */
+  function stats(list) {
+    var n = list.length; if (!n) return null;
+    var w = list.filter(function (r) { return r.R > 0; }).length, sum = list.reduce(function (a, r) { return a + r.R; }, 0);
+    var eq = 0, peak = 0, dd = 0; list.forEach(function (r) { eq += r.R; peak = Math.max(peak, eq); dd = Math.max(dd, peak - eq); });
+    var wins = list.filter(function (r) { return r.R > 0; }), losses = list.filter(function (r) { return r.R <= 0; });
+    return { n: n, win: w / n, avg: sum / n, sum: sum, dd: dd, aw: wins.length ? wins.reduce(function (a, r) { return a + r.R; }, 0) / wins.length : 0, al: losses.length ? losses.reduce(function (a, r) { return a + r.R; }, 0) / losses.length : 0 };
+  }
+  function renderEval() {
+    var tr = S.recs.filter(function (r) { return !r.nt; }), body = $("evalbody");
+    if (!tr.length) { body.innerHTML = '<p class="hint">Noch keine Trades. Die Auswertung erscheint nach dem ersten Setup.</p>'; return; }
+    var st = stats(tr), days = S.recs.length;
+    var h = '<div class="kpis">' +
+      '<div><b>' + tr.length + '</b><span>Trades an ' + days + ' Tagen</span></div>' +
+      '<div><b>' + Math.round(st.win * 100) + ' %</b><span>Trefferquote</span></div>' +
+      '<div><b class="' + (st.avg >= 0 ? "pos" : "neg") + '">' + (st.avg >= 0 ? "+" : "") + de(st.avg, 2) + ' R</b><span>Erwartung pro Trade</span></div>' +
+      '<div><b class="' + (st.sum >= 0 ? "pos" : "neg") + '">' + (st.sum >= 0 ? "+" : "") + de(st.sum, 1) + ' R</b><span>Summe · größter Rückgang ' + de(st.dd, 1) + ' R</span></div></div>';
+    h += '<div class="chart" id="eqc"></div>';
+    var dims = [
+      ["Note", function (r) { return r.grade === "A" ? "A · alles sauber" : "B · Zweifel"; }],
+      ["Mit oder gegen Bias", function (r) { return r.bias === "none" || !r.bias ? "kein Bias" : ((r.dir === "long") === (r.bias === "bull") ? "mit Bias" : "gegen Bias"); }],
+      ["SMT am Level", function (r) { return r.smt === "ja" ? "ja" : r.smt === "nein" ? "nein" : "nicht geprüft"; }],
+      ["Sweep-Art", function (r) { return r.sk === "S" ? "Sweep" : "Fehlausbruch"; }],
+      ["Bestätigung", function (r) { return r.conf; }],
+      ["Fortsetzung", function (r) { return r.conf && r.cont; }],
+      ["Index", function (r) { return NAME[r.sym]; }],
+      ["Richtung", function (r) { return r.dir === "long" ? "Long" : "Short"; }],
+      ["Einstiegszeit", function (r) { return r.ei <= 20 ? "bis 16:10" : "16:10–16:30"; }],
+      ["CRV", function (r) { return r.crv < 1.5 ? "unter 1,5" : r.crv < 2.5 ? "1,5 bis 2,5" : "ab 2,5"; }],
+      ["Gesweeptes Level", function (r) { return (r.lvl || "").replace(/-Hoch|-Tief/, ""); }]
+    ];
+    h += '<div class="tablewrap"><table class="ltable"><thead><tr><th>Merkmal</th><th>Gruppe</th><th>Trades</th><th>Treffer</th><th>Ø R</th><th>Summe R</th></tr></thead><tbody>';
+    dims.forEach(function (dm) {
+      var g = {}; tr.forEach(function (r) { var k = dm[1](r) || "–"; (g[k] = g[k] || []).push(r); });
+      Object.keys(g).sort().forEach(function (k, j) {
+        var s = stats(g[k]);
+        h += '<tr class="' + (s.n < 20 ? "few" : "") + '"><td>' + (j ? "" : dm[0]) + "</td><td>" + esc(k) + '</td><td class="num">' + s.n + '</td><td class="num">' + Math.round(s.win * 100) + ' %</td><td class="num ' + (s.avg >= 0 ? "pos" : "neg") + '">' + (s.avg >= 0 ? "+" : "") + de(s.avg, 2) + '</td><td class="num">' + de(s.sum, 1) + "</td></tr>";
+      });
+    });
+    h += "</tbody></table></div><p class='hint'>Graue Zeilen haben weniger als 20 Trades. Dort ist der Unterschied noch Zufall. Ein Merkmal kommt erst in deine Regeln, wenn es mindestens 20 Fälle und einen deutlichen Unterschied zeigt.</p>";
+    if (tr.length >= 40) {
+      var cut = Math.round(tr.length * 0.7), a = stats(tr.slice(0, cut)), b = stats(tr.slice(cut));
+      h += '<div class="tablewrap"><table class="ltable"><thead><tr><th>Prüfung</th><th>Trades</th><th>Treffer</th><th>Ø R</th></tr></thead><tbody>' +
+        '<tr><td>Entwicklung (erste 70 %)</td><td class="num">' + a.n + '</td><td class="num">' + Math.round(a.win * 100) + ' %</td><td class="num">' + de(a.avg, 2) + "</td></tr>" +
+        '<tr><td>Prüfung (letzte 30 %)</td><td class="num">' + b.n + '</td><td class="num">' + Math.round(b.win * 100) + ' %</td><td class="num">' + de(b.avg, 2) + "</td></tr></tbody></table></div>" +
+        "<p class='hint'>Leite neue Regeln nur aus den ersten 70 % ab. Halten sie in den letzten 30 %, sind sie wahrscheinlich kein Zufall.</p>";
+    }
+    body.innerHTML = h;
+    // Kapitalkurve
+    var host = $("eqc"), W = 900, H = 160, pl = 40, pr = 10, pt = 10, pb = 20, eq = [0];
+    tr.forEach(function (r) { eq.push(eq[eq.length - 1] + r.R); });
+    var lo = Math.min.apply(null, eq), hi = Math.max.apply(null, eq); if (hi - lo < 2) { hi += 1; lo -= 1; }
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Kapitalkurve in R" }, host);
+    var X = function (i) { return pl + (W - pl - pr) * i / Math.max(1, eq.length - 1); }, Y = function (v) { return pt + (hi - v) / (hi - lo) * (H - pt - pb); };
+    el("line", { x1: pl, x2: W - pr, y1: Y(0), y2: Y(0), stroke: "var(--line)" }, svg);
+    el("text", { x: 4, y: Y(hi) + 4, "font-size": 11, fill: "var(--muted)" }, svg, de(hi, 0) + " R");
+    el("text", { x: 4, y: Y(lo) + 4, "font-size": 11, fill: "var(--muted)" }, svg, de(lo, 0) + " R");
+    el("polyline", { points: eq.map(function (v, i) { return X(i) + "," + Y(v); }).join(" "), fill: "none", stroke: "var(--open)", "stroke-width": 2 }, svg);
+    el("text", { x: W - pr, y: H - 4, "font-size": 11, fill: "var(--muted)", "text-anchor": "end" }, svg, "Trades →");
+  }
+
+  function renderJournal() {
+    var host = $("journal");
+    if (!S.recs.length) { host.innerHTML = '<p class="hint">Noch keine Tage.</p>'; return; }
+    var h = '<table class="ltable"><thead><tr><th>#</th><th>Datum</th><th>Index</th><th>Bias</th><th>Trade</th><th>Merkmale</th><th>Ergebnis</th><th></th></tr></thead><tbody>';
+    S.recs.forEach(function (r, i) {
+      var bias = r.bias === "bull" ? "bullisch" : r.bias === "bear" ? "bärisch" : "keiner";
+      h += "<tr><td class='num'>" + (i + 1) + "</td><td class='num'>" + dateDE(r.d) + "</td><td>" + NAME[r.sym] + "</td><td>" + bias + "</td>" +
+        (r.nt ? "<td colspan='3' style='color:var(--muted)'>kein Setup</td>" :
+          "<td>" + (r.dir === "long" ? "Long" : "Short") + " " + t5(r.ei - 1, r.d).de + "</td><td>" + [r.grade, r.sk === "S" ? "Sweep" : "Fehlausbr.", r.conf, r.cont, "SMT " + r.smt].join(" · ") + "</td><td class='num " + (r.R > 0 ? "pos" : r.R < 0 ? "neg" : "") + "'>" + (r.R > 0 ? "+" : "") + de(r.R, 2) + " R</td>") +
+        "<td><button class='btn ghost small' type='button' data-del='" + i + "'>Löschen</button></td></tr>";
+    });
+    host.innerHTML = h + "</tbody></table>";
+    host.querySelectorAll("[data-del]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (b.dataset.armed) { S.recs.splice(+b.dataset.del, 1); save(); render(); }
+        else { b.dataset.armed = 1; b.textContent = "Wirklich?"; }
+      });
+    });
+  }
+
+  function render() {
+    var card = $("day"); card.innerHTML = "";
+    var tr = S.recs.filter(function (r) { return !r.nt; }).length;
+    $("progress").innerHTML = "Tage <strong>" + S.recs.length + "</strong> · Setups <strong>" + tr + " / 100</strong> · verfügbar " + dates().length + " Tage";
+    $("symsel").value = S.sym;
+    var c = S.cur;
+    if (!c) {
+      var left = dates().filter(function (d) { return !used()[d]; }).length;
+      card.innerHTML = left ? '<h2>Bereit</h2><p>Jeder Tag kommt in zufälliger Reihenfolge und nur einmal. Spielst du einen Tag mit US 500, wird derselbe Tag nicht noch einmal mit US TECH 100 gezeigt, weil du ihn beim SMT-Vergleich schon gesehen hast.</p>' : "<h2>Alle Tage gespielt</h2><p>Für weitere Tage exportierst du neue Daten mit dem cBot aus cTrader.</p>";
+      if (left) { var b = mk("btn", "Ersten Tag starten"); b.addEventListener("click", nextDay); card.appendChild(b); }
+    } else {
+      var day = dayOf(c.sym, c.d);
+      var head = document.createElement("div"); head.className = "ex-head";
+      head.innerHTML = "<h2>" + dateDE(c.d) + " · " + NAME[c.sym] + '</h2><span class="eyebrow">Tag ' + (S.recs.length + (c.phase < 3 ? 1 : 0)) + "</span>";
+      card.appendChild(head);
+      phase1(card, day, c);
+      if (c.phase >= 2) phase2(card, day, c);
+      if (c.phase >= 3) phase3(card, day, c);
+    }
+    renderEval(); renderJournal();
+  }
+
+  $("symsel").addEventListener("change", function (e) { S.sym = e.target.value; save(); });
+
+  function download(name, text, type) {
+    var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: type })); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  $("csv").addEventListener("click", function () {
+    var cols = ["d", "sym", "bias", "tgt", "rb", "nt", "dir", "lvl", "sk", "conf", "cont", "smt", "grade", "entry", "stop", "target", "crv", "ei", "xi", "xp", "R", "out", "amb", "note", "after"];
+    var rows = [cols.join(";")].concat(S.recs.map(function (r) { return cols.map(function (k) { var v = r[k]; if (v == null) return ""; if (typeof v === "number") return String(v).replace(".", ","); return '"' + String(v).replace(/"/g, '""') + '"'; }).join(";"); }));
+    download("backtest.csv", "﻿" + rows.join("\n"), "text/csv");
+  });
+  $("jsonout").addEventListener("click", function () { download("backtest-sicherung.json", JSON.stringify(S), "application/json"); });
+  $("jsonin").addEventListener("change", function (e) {
+    var f = e.target.files[0]; if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () { try { var o = JSON.parse(rd.result); if (o && Array.isArray(o.recs)) { S = Object.assign({ sym: "ES", recs: [], order: null, cur: null }, o); save(); render(); } } catch (err) {} };
+    rd.readAsText(f);
+  });
+  $("wipe").addEventListener("click", function (e) {
+    var b = e.target;
+    if (b.dataset.armed) { S = { sym: S.sym, recs: [], order: null, cur: null }; save(); b.textContent = "Alles löschen"; delete b.dataset.armed; render(); }
+    else { b.dataset.armed = 1; b.textContent = "Wirklich alles löschen?"; }
+  });
+
+  fetch("daten/backtest-tage.json").then(function (r) { return r.json(); }).then(function (d) { DATA = d; render(); })
+    .catch(function () { $("day").innerHTML = '<p class="err">Die Daten konnten nicht geladen werden. Öffne die Seite über das Lerncenter im Internet, nicht als lokale Datei.</p>'; });
+})();
+</script>
+</body>
+</html>

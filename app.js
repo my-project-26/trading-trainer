@@ -388,6 +388,7 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
     { id: 'sessions-und-levels', t: 'Sessions und Levels', g: 'US-500-Journal', d: 'Session-Zeiten in NY- und deutscher Zeit, Level-Begriffe, offene Levels prüfen und das Journal vor und nach 15:30 ausfüllen.' },
     { id: 'bias-vor-1530', t: 'Bias vor 15:30', g: 'US-500-Journal', d: 'Sweep oder Durchbruch erkennen, die Regel in drei Schritten und zwanzig geführte Übungscharts.' },
     { id: 'bias-echte-tage', t: 'Bias an echten Tagen', g: 'US-500-Journal', d: 'Bias-Trainer mit 126 echten US-500-Handelstagen von Mai bis November 2026, inklusive Auswertung der Regel.' },
+    { id: 'backtest', t: 'Backtest: 100 Setups', g: 'Phase 2 · Backtest', d: 'Echte Tage aus deinen cTrader-Daten (US 500 und US TECH 100): Bias bis 15:30 festhalten, dann Kerze für Kerze freischalten, Setup mit Merkmalen eintragen. Ergebnis in R und Auswertung nach Merkmalen.' },
     { id: 'ctrader-werkzeuge', t: 'cTrader-Werkzeuge', g: 'Werkzeuge', d: 'Indikator SessionLevels und cBot BiasDatenExport: einbauen, einstellen, Dateien herunterladen.' }
   ];
   function setLesson(id) {
