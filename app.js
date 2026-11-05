@@ -387,6 +387,7 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
     ...Object.keys(LESSONS).map(n => ({ id: 'tjr-' + pad2(n), t: `Lektion ${n} · ${LESSONS[n][0]}`, g: 'TJR-Kurs', d: `TJR-Kurs, Lektion ${n} von 16: ${LESSONS[n][0]}. Mit Übungen und Quiz.` })),
     { id: 'sessions-und-levels', t: 'Sessions und Levels', g: 'US-500-Journal', d: 'Session-Zeiten in NY- und deutscher Zeit, Level-Begriffe, offene Levels prüfen und das Journal vor und nach 15:30 ausfüllen.' },
     { id: 'bias-vor-1530', t: 'Bias vor 15:30', g: 'US-500-Journal', d: 'Sweep oder Durchbruch erkennen, die Regel in drei Schritten und zwanzig geführte Übungscharts.' },
+    { id: 'bias-echte-tage', t: 'Bias an echten Tagen', g: 'US-500-Journal', d: 'Bias-Trainer mit 126 echten US-500-Handelstagen von Mai bis November 2026, inklusive Auswertung der Regel.' },
     { id: 'ctrader-werkzeuge', t: 'cTrader-Werkzeuge', g: 'Werkzeuge', d: 'Indikator SessionLevels und cBot BiasDatenExport: einbauen, einstellen, Dateien herunterladen.' }
   ];
   function setLesson(id) {
