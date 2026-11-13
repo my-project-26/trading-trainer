@@ -386,12 +386,12 @@ ${t.err.length ? `<ul class="err">${t.err.map(e => `<li>${e}</li>`).join('')}</u
   const LEKTIONEN = [
     ...Object.keys(LESSONS).map(n => ({ id: 'tjr-' + pad2(n), t: `Lektion ${n} · ${LESSONS[n][0]}`, g: 'TJR-Kurs', d: `TJR-Kurs, Lektion ${n} von 16: ${LESSONS[n][0]}. Mit Übungen und Quiz.` })),
     ...[
-      ['Trend nach Markttechnik', 'Bewegung und Korrektur, Punkt 1-2-3, wann ein Trend bestätigt, ungültig oder beendet ist. Mit Übungen auf deinen US-500-Charts.'],
-      ['Trendgrößen', 'H1 gibt die Richtung vor, M15 liefert das Signal: mit, gegen oder ohne großen Trend.'],
-      ['Einstiege', 'Punkt-2-Einstieg mit Stopp-Order und der frühe Einstieg am Korrekturende.'],
-      ['Innenstäbe und Trendaufbau', 'Innenstab und Mutterkerze erkennen, Ausbruch in Trendrichtung handeln, müde Trends erkennen.'],
-      ['Stopps', 'Initialstopp hinter Punkt 3 und Stopp nachziehen nach jeder Trendbestätigung.'],
-      ['Voigt und TJR kombiniert', 'Dein Regelwerk: Bias und Ziel nach TJR, Einstieg und Stopp nach Voigt. Mit Auswertung auf deinen Daten.']
+      ['Trend nach Markttechnik', 'Bewegung und Korrektur, Punkt 1-2-3, Trendbruch und trendlose Phase. Mit Übungen auf deinen US-500-Charts.'],
+      ['Zeiteinheiten', 'Matroschka-Prinzip: Jedes M15-Signal wird in H1 eingeordnet – mit, gegen oder ohne H1-Trend.'],
+      ['Einstiege', 'Durchbruch durch Punkt 2, der Umkehrstab in Trendrichtung und Tageslinien mit Dominoeffekt.'],
+      ['Innenstäbe', 'Außen- und Innenstab nach Voigt (Schlusskurs zählt), Ausbruch oder Test, warum dort die meisten Fehltrades entstehen.'],
+      ['Stopps', 'Erst das Ziel, dann der Stopp: Punkt 3 im Trendhandel, Trailingstopp mit Innenstab-Regel im Bewegungshandel.'],
+      ['Voigt und TJR kombiniert', 'Dein Regelwerk mit Auswertung auf deinen Daten und Voigts Sicht auf Bots.']
     ].map(([t, d], i) => ({ id: 'voigt-' + pad2(i + 1), t: `Markttechnik ${i + 1} · ${t}`, g: 'Markttechnik (Voigt)', d: `Markttechnik nach Michael Voigt, Lektion ${i + 1} von 6: ${d}` })),
     { id: 'sessions-und-levels', t: 'Sessions und Levels', g: 'US-500-Journal', d: 'Session-Zeiten in NY- und deutscher Zeit, Level-Begriffe, offene Levels prüfen und das Journal vor und nach 15:30 ausfüllen.' },
     { id: 'bias-vor-1530', t: 'Bias vor 15:30', g: 'US-500-Journal', d: 'Sweep oder Durchbruch erkennen, die Regel in drei Schritten und zwanzig geführte Übungscharts.' },
